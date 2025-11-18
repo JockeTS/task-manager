@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchItems, updateItem } from "./api/items";
+import { fetchItems, updateItem, addItem } from "./api/items";
 import TodoItem from "./components/TodoItem";
 
 function App() {
@@ -58,7 +58,10 @@ function App() {
     });
 
     try {
-      await updateItem(newItem);
+      await addItem({
+        name: newItem.name,
+        position: newPosition
+      });
     } catch (error) {
       console.error("Error updating item:", error);
     }

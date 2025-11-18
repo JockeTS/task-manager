@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getAllItemsOrdered, updateItem } = require("./database/index")
+const { getAllItemsOrdered, updateItem, insertItem } = require("./database/index")
 
 // Helper: build nested tree
 function buildTree(items, parentId = null) {
