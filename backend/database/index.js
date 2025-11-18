@@ -25,13 +25,13 @@ function insertItem(name, position = 0) {
 }
 
 /*
-function insertItem({ name, parent_id = null, user = null, sort_order = 0 }) {
+function insertItem({ name, parent_id = null, position }) {
   const stmt = db.prepare(
-    `INSERT INTO items (name, parent_id, user, sort_order) VALUES (?, ?, ?, ?)`
+    `INSERT INTO items (name, parent_id, position) VALUES (?, ?, ?)`
   );
-  return stmt.run(name, parent_id, user, sort_order).lastInsertRowid;
+  return stmt.run(name, parent_id, position).lastInsertRowid;
 }
-  */
+*/
 
 function getAllItems() {
     return database.prepare("SELECT * FROM items").all();
