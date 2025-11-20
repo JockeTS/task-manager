@@ -13,6 +13,14 @@ database.prepare(`
     )    
 `).run();
 
+function updateItemPositions(position) {
+  database.prepare(`
+    UPDATE items
+    SET position = position + 1
+    WHERE position >= ?
+  `).run(position);
+}
+
 function insertItem(name, position = 0) {
     const statement = database.prepare(`
         INSERT
@@ -53,4 +61,4 @@ function deleteItem(id) {
   db.prepare("DELETE FROM items WHERE id = ?").run(id);
 }
 
-module.exports = { database, insertItem, getAllItems, getAllItemsOrdered, updateItem };
+module.exports = { database, insertItem, getAllItems, getAllItemsOrdered, updateItem, updateItemPositions };

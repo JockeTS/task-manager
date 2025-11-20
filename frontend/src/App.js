@@ -21,6 +21,8 @@ function App() {
 
   // Update item optimistically before interacting with API
   const handleItemUpdate = async (updatedItem) => {
+    console.log("u item: ", updatedItem);
+
     // Update item in state
     setItems((previousItems) =>
       previousItems.map((previousItem) =>
@@ -30,71 +32,53 @@ function App() {
 
     // Update item in database
     try {
-      await updateItem(updatedItem);
+      if (updatedItem.isNew) {
+        await addItem({
+        name: updatedItem.name,
+        position: updatedItem.position
+        });
+      } else {
+        await updateItem(updatedItem);
+      }
+
     } catch (error) {
       console.error("Error updating item:", error);
     }
   };
 
-  const handleAddNewItemBelow = async (item) => {
-    console.log(item);
-    const newPosition = item.position;
-    console.log(newPosition);
+  // Add a new todo item below the clicked one
+  const handleAddNewItemBelow = async (position) => {
+    const newPosition = position + 1;
 
     const newItem = {
       id: items.length + 1,
-      name: "test",
-      // position: items.length + 1
+      name: "",
+      position: newPosition,
       isNew: true
     }
 
-    setItems((previousItems) => {
+    setItems(prevItems => {
+      // Increment item positions (after point of insertion)
+      const adjusted = prevItems.map(item => {
+        if (item.position >= newPosition) {
+          return { ...item, position: item.position + 1 };
+        }
+        return item;
+      });
 
+      // Insert the new item at the correct position
       return [
-        ...previousItems.slice(0, newPosition),
+        ...adjusted.slice(0, newPosition - 1),
         newItem,
-        ...previousItems.slice(newPosition)
+        ...adjusted.slice(newPosition - 1)
       ];
     });
 
-    try {
-      await addItem({
-        name: newItem.name,
-        position: newPosition
-      });
-    } catch (error) {
-      console.error("Error updating item:", error);
-    }
-
-    /*
-    setItems((previousItems) =>
-      previousItems.map((previousItem) => {
-        // previousItem.id === updatedItem.id ? updatedItem : previousItem
-        if (previousItem.position === newPosition) {
-          return newItem;
-        } else {
-          return previousItem;
-        }
-      }
-      )
-    );
-
-    setItems((previousItems) => [
-      ...previousItems,
-      {
-        id: items.length + 1,
-        name: "test",
-        // position: items.length + 1
-        isNew: true
-      }
-    ])
+    /* 
+    The new item is not saved to the database right away, but rather auto-focused.
+    When the user presses Enter or clicks outside the input field, the item's onBlur effect is triggered.
+    This is how the item is saved to the database.
     */
-
-    // Create temporary todo item (input field) below clicked item (position +1)
-
-    // Make sure user enters text and leaves input field
-
-    // Add new item to db, re-render list
   }
 
   return (
@@ -102,7 +86,7 @@ function App() {
       <h1>My To-Do Items</h1>
       <ul>
         {items.map((item) => (
-          <TodoItem key={item.id} item={item} onUpdate={handleItemUpdate} onAddNew={handleAddNewItemBelow} isNew={item.isNew} />
+          <TodoItem key={item.id} item={item} onUpdate={handleItemUpdate} onAddNewItemBelow={handleAddNewItemBelow} isNew={item.isNew} />
         ))}
       </ul>
     </div>

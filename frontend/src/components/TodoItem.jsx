@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EditInput from "./EditInput";
 
-function TodoItem({ item, onUpdate, onAddNew, isNew = false }) {
+function TodoItem({ item, onUpdate, onAddNewItemBelow, isNew = false }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(isNew);
   // const [value, setValue] = useState(item.name);
@@ -35,7 +35,7 @@ function TodoItem({ item, onUpdate, onAddNew, isNew = false }) {
           autoFocus
         />
         */
-
+        
         <EditInput initialValue={item.name} onBlur={handleBlur} />
       ) : (
         <span onClick={() => handleTextClick(item)}>{item.name}</span>
@@ -55,7 +55,7 @@ function TodoItem({ item, onUpdate, onAddNew, isNew = false }) {
           <button
             onClick={(event) => {
               event.stopPropagation();
-              onAddNew(item);
+              onAddNewItemBelow(item.position);
             }}
           >
             Add
