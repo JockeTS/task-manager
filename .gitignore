@@ -24,4 +24,4 @@ yarn-error.log*
 
 # Custom
 node_modules/
-.db
+*.db
