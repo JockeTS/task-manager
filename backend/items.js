@@ -1,41 +1,55 @@
 const express = require("express");
 const router = express.Router();
-const { getAllItemsOrdered, updateItem, insertItem, updateItemPositions } = require("./database/index")
+const { insertItem, getItems, updateItem, deleteItem } = require("./database/index")
 
-// Helper: build nested tree
-function buildTree(items, parentId = null) {
-  return items
-    .filter(item => item.parent_id === parentId)
-    .map(item => ({ ...item, items: buildTree(items, item.id) }));
-}
+// Create (POST) an item
+router.post("/", (req, res) => {  
+  // const { name, position } = req.body;
+  // const rowId = insertItem({ name, position });
+  // console.log(rowId);
+  // res.json({ rowId });
 
-// GET /items → get nested list
+  // Make sure data types are correct
+  const name = String(req.body.name).trim();
+  const position = Number(req.body.position);
+
+  if (!name) {
+    return res.status(400).json({ error: "Required field(s) missing." });
+  }
+
+  const newItem = insertItem({ name, position }); console.log("new item:", newItem);
+  res.json(newItem);
+});
+
+// Read (GET) all items, ordered by position
 router.get("/", (req, res) => {
-  const items = getAllItemsOrdered();
-  // res.json(buildTree(items));
+  const items = getItems();
+
+  // Send items to client
   res.json(items);
 });
 
-// Create a new item
-router.post("/", (req, res) => {
-  console.log("req bodey: ", req.body)
-  
-  const { name, position } = req.body;
-  updateItemPositions(position);
-  const id = insertItem(name, position);
-  res.json({ id });
-});
-
-// Update an existing item
+// Update (PUT) an item
 router.put("/:id", (req, res) => {
-  updateItem(req.params.id, req.body);
-  res.json({ success: true });
+  const itemId = req.params.id;
+  const fieldsToUpdate = req.body;
+  updateItem(itemId, fieldsToUpdate);
+  // res.json({ success: true });
 });
 
-// Delete an existing item
+// Delete (DELETE) an item
 router.delete("/:id", (req, res) => {
   deleteItem(req.params.id);
   res.json({ success: true });
 });
 
 module.exports = router;
+
+/*
+// Helper: build nested tree
+function buildTree(items, parentId = null) {
+  return items
+    .filter(item => item.parent_id === parentId)
+    .map(item => ({ ...item, items: buildTree(items, item.id) }));
+}
+*/

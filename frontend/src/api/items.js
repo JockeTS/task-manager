@@ -15,12 +15,12 @@ export const fetchItems = async () => {
   }
 };
 
-export const addItem = async (updatedItem) => {
+export const createItem = async (newItem) => {
   try {
     const res = await fetch(`http://localhost:8000/items/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: updatedItem.name, position: updatedItem.position })
+      body: JSON.stringify({ name: newItem.name, position: newItem.position })
       // body: JSON.stringify( updatedItem )
     });
 
@@ -48,5 +48,21 @@ export const updateItem = async (updatedItem) => {
     console.log("Updated item:", data)
   } catch (error) {
     console.error("Error updating item:", error)
+  }
+};
+
+export const deleteItem = async (itemId) => {
+  try {
+    const res = await fetch(`http://localhost:8000/items/${itemId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+    const data = await res.json();
+    console.log("Deleted item:", data)
+  } catch (error) {
+    console.error("Error deleting item:", error)
   }
 };

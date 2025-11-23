@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchItems, updateItem, addItem } from "./api/items";
+import { fetchItems, updateItem, createItem, deleteItem } from "./api/items";
 import TodoItem from "./components/TodoItem";
 
 function App() {
@@ -19,19 +19,33 @@ function App() {
     loadItems();
   }, []);
 
-  // Update item optimistically before interacting with API
-  const handleItemUpdate = async (updatedItem) => {
-    console.log("u item: ", updatedItem);
-
-    // Update item in state
-    setItems((previousItems) =>
-      previousItems.map((previousItem) =>
-        previousItem.id === updatedItem.id ? updatedItem : previousItem
+  const handleItemSave = async (updatedItem) => {
+    // Update item in state (optimistic update)
+    setItems((prevItems) =>
+      prevItems.map((prevItem) =>
+        prevItem.id === updatedItem.id ? updatedItem : prevItem
       )
     );
 
-    // Update item in database
+    // Add or update item in database
     try {
+      const savedItem = updatedItem.isNew
+        ? await createItem({
+          name: updatedItem.name,
+          position: updatedItem.position,
+        })
+        : await updateItem(updatedItem);
+
+      // If item was saved to DB, update state with that actual item
+      if (savedItem) {
+        setItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === updatedItem.id ? savedItem : item
+          )
+        );
+      }
+
+      /*
       if (updatedItem.isNew) {
         await addItem({
         name: updatedItem.name,
@@ -40,26 +54,31 @@ function App() {
       } else {
         await updateItem(updatedItem);
       }
-
+      */
     } catch (error) {
       console.error("Error updating item:", error);
     }
   };
 
   // Add a new todo item below the clicked one
-  const handleAddNewItemBelow = async (position) => {
+  const handleAddItemBelow = async (position) => {
+    // const clickedItem = items.find(item => item.id === itemId);
+    // const newPosition = clickedItem.position + 1;
     const newPosition = position + 1;
 
     const newItem = {
-      id: items.length + 1,
+      id: `temp-${crypto.randomUUID()}`,
       name: "",
       position: newPosition,
       isNew: true
     }
 
     setItems(prevItems => {
+      // Safety sort
+      const sorted = [...prevItems].sort((a, b) => a.position - b.position);
+
       // Increment item positions (after point of insertion)
-      const adjusted = prevItems.map(item => {
+      const adjusted = sorted.map(item => {
         if (item.position >= newPosition) {
           return { ...item, position: item.position + 1 };
         }
@@ -81,12 +100,53 @@ function App() {
     */
   }
 
+  const handleItemDelete = async (itemId) => {
+    // Find the item from the itemId
+    // const clickedItem = items.find(item => item.id === itemId);
+    // console.log(clickedItem);
+
+    // Update state by filtering out the clicked item and doing a safety sort
+    // Also recreate positions from indexes (indices?)
+
+    setItems(prevItems => {
+      // Remove the deleted item
+      const filtered = prevItems.filter(prevItem => prevItem.id !== itemId);
+
+      // Sort items by position
+      const sorted = filtered.sort((a, b) => a.position - b.position);
+
+      // Re-index positions
+      return sorted.map((item, index) => ({ ...item, position: index + 1 }));
+    });
+
+    // Delete item from database
+    try {
+      await deleteItem(itemId);
+    } catch (error) {
+      console.error("Error deleting item: ", error);
+    }
+
+    /*
+    setItems(prevItems => prevItems
+      .filter(prevItem => prevItem.id !== itemId)
+      .sort((a, b) => a.position - b.position))
+      .map((item, index) => ({ ...item, position: index + 1 }));
+    ;
+    */
+  };
+
   return (
     <div style={{ padding: "2rem" }}>
       <h1>My To-Do Items</h1>
       <ul>
         {items.map((item) => (
-          <TodoItem key={item.id} item={item} onUpdate={handleItemUpdate} onAddNewItemBelow={handleAddNewItemBelow} isNew={item.isNew} />
+          <TodoItem
+            key={item.id}
+            item={item}
+            onSave={handleItemSave}
+            onAddItemBelow={handleAddItemBelow}
+            onDelete={handleItemDelete}
+          />
         ))}
       </ul>
     </div>
