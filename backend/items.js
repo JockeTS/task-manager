@@ -1,46 +1,78 @@
 const express = require("express");
 const router = express.Router();
-const { insertItem, getItems, updateItem, deleteItem } = require("./database/index")
+const { insertItem, getItems, updateItem, deleteItem } = require("./database/index");
 
 // Create (POST) an item
-router.post("/", (req, res) => {  
-  // const { name, position } = req.body;
-  // const rowId = insertItem({ name, position });
-  // console.log(rowId);
-  // res.json({ rowId });
+router.post("/", (req, res) => {
+  try {
+    // Make sure data types are correct
+    const name = String(req.body.name).trim();
+    const position = Number(req.body.position);
 
-  // Make sure data types are correct
-  const name = String(req.body.name).trim();
-  const position = Number(req.body.position);
+    if (!name || !position) {
+      return res.status(400).json({ error: "Required field(s) missing." });
+    }
 
-  if (!name) {
-    return res.status(400).json({ error: "Required field(s) missing." });
+    const newItem = insertItem({ name, position });
+
+    if (!newItem) {
+      throw new Error("Insert returned no item");
+    }
+
+    // Send new item to client 
+    res.status(201).json(newItem);
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal server error." });
   }
-
-  const newItem = insertItem({ name, position }); console.log("new item:", newItem);
-  res.json(newItem);
 });
 
 // Read (GET) all items, ordered by position
 router.get("/", (req, res) => {
-  const items = getItems();
+  try {
+    const items = getItems();
 
-  // Send items to client
-  res.json(items);
+    // Send items to client
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
 });
 
-// Update (PUT) an item
-router.put("/:id", (req, res) => {
+// Update (PATCH) an item
+router.patch("/:id", (req, res) => {
   const itemId = req.params.id;
   const fieldsToUpdate = req.body;
-  updateItem(itemId, fieldsToUpdate);
-  // res.json({ success: true });
+
+  try {
+    const itemToUpdate = updateItem(itemId, fieldsToUpdate);
+
+    // If item to update was not found
+    if (!itemToUpdate) {
+      return res.status(404).json({ success: false, message: "Item not found." });
+    }
+
+    res.status(200).json(itemToUpdate);
+  } catch (error) {
+    // If server-side error
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
 });
 
 // Delete (DELETE) an item
 router.delete("/:id", (req, res) => {
-  deleteItem(req.params.id);
-  res.json({ success: true });
+  try {
+    const data = deleteItem(req.params.id);
+
+    if (!data) {
+      return res.status(404).json({ success: false, message: "Item not found." });
+    }
+
+    // Send data to client
+    res.status(200).json(data);
+  } catch (error) {
+    // Send error message to client
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
 });
 
 module.exports = router;

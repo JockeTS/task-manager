@@ -75,7 +75,7 @@ function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
           <button
             onClick={(event) => {
               event.stopPropagation();
-              onAddItemBelow(item.position);
+              onAddItemBelow(item);
               // onAddItemBelow(item.id);
             }}
           >
@@ -85,7 +85,7 @@ function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
           <button
             onClick={(event) => {
               event.stopPropagation();
-              onDelete(item.id);
+              onDelete(item);
             }}>
             🗑️
           </button>

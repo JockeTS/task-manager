@@ -1,68 +1,87 @@
+// Create an item or throw an error if unsuccessful
+export const createItem = async (newItemData) => {
+  const res = await fetch(`http://localhost:8000/items/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: newItemData.name, position: newItemData.position })
+  });
+
+  let newItem;
+
+  try {
+    newItem = await res.json();
+  } catch (error) {
+    newItem = null;
+  }
+
+  if (!res.ok) {
+    throw new Error(newItem.message || "Create item failed.");
+  }
+
+  return newItem;
+};
+
+// Fetch all items or throw an error if unsuccessful
 export const fetchItems = async () => {
+  const res = await fetch("http://localhost:8000/items", {
+    method: "GET"
+  });
+
+  let items;
+
   try {
-    const res = await fetch("http://localhost:8000/items");
-
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-
-    const data = await res.json();
-    // setItems(data);
-
-    return data;
-
-    // Catch HTTP-level failures and network errors
+    items = await res.json();
   } catch (error) {
-    console.error("Error fetching items:", error);
+    items = null;
   }
+
+  if (!res.ok) {
+    throw new Error(items?.message || "Fetch items failed.");
+  }
+
+  return items;
 };
 
-export const createItem = async (newItem) => {
+// Update an item or throw an error if unsuccessful
+export const updateItem = async (updatedItemData) => {
+  const res = await fetch(`http://localhost:8000/items/${updatedItemData.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ completed: updatedItemData.completed, name: updatedItemData.name })
+  });
+
+  let updatedItem;
+
   try {
-    const res = await fetch(`http://localhost:8000/items/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newItem.name, position: newItem.position })
-      // body: JSON.stringify( updatedItem )
-    });
-
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-
-    const data = await res.json();
-    console.log("Updated item:", data)
+    updatedItem = await res.json();
   } catch (error) {
-    console.error("Error updating item:", error)
+    updatedItem = null;
   }
+
+  if (!res.ok) {
+    throw new Error(updatedItem?.message || "Update item failed.");
+  }
+
+  return updatedItem;
 };
 
-export const updateItem = async (updatedItem) => {
-  try {
-    const res = await fetch(`http://localhost:8000/items/${updatedItem.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ completed: updatedItem.completed, name: updatedItem.name })
-      // body: JSON.stringify( updatedItem )
-    });
-
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-
-    const data = await res.json();
-    console.log("Updated item:", data)
-  } catch (error) {
-    console.error("Error updating item:", error)
-  }
-};
-
+// Delete an item or throw an error if unsuccessful
 export const deleteItem = async (itemId) => {
+  const res = await fetch(`http://localhost:8000/items/${itemId}`, {
+    method: "DELETE",
+  });
+
+  let success;
+
   try {
-    const res = await fetch(`http://localhost:8000/items/${itemId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-
-    const data = await res.json();
-    console.log("Deleted item:", data)
-  } catch (error) {
-    console.error("Error deleting item:", error)
+    success = await res.json();
+  } catch {
+    success = null;
   }
+
+  if (!res.ok) {
+    throw new Error(success?.message || "Delete item failed.");
+  }
+
+  return success;
 };

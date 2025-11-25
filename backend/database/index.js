@@ -1,5 +1,9 @@
-const path = require("path");
-const Database = require("better-sqlite3");
+import path from "path";
+import { fileURLToPath } from "url";
+import Database from "better-sqlite3";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const databasePath = path.join(__dirname, "task-manager.db");
 const database = new Database(databasePath);
@@ -15,7 +19,7 @@ database.prepare(`
 `).run();
 
 // Insert a single item, update positions >= new item's position (excluding new item)
-const insertItem = database.transaction((item) => {
+export const insertItem = database.transaction((item) => {
   const newItemData = {
     name: item.name.trim(),
     position: item.position
@@ -52,33 +56,61 @@ const insertItem = database.transaction((item) => {
 });
 
 // Get all items ordered by position and name (if position doesn't exist)
-function getItems() {
-  return database.prepare("SELECT * FROM items ORDER BY position, name").all();
+export const getItems = () => {
+  const items = database.prepare(`
+    SELECT *
+    FROM items
+    ORDER BY position, name
+  `).all();
+
+  return items;
 }
 
 // Update fields of a single item
-const updateItem = (itemId, fieldsToUpdate) => {
+export const updateItem = database.transaction((itemId, fieldsToUpdate) => {
   // Create a query-friendly string with the fields to be updated
   const fieldsString = Object.keys(fieldsToUpdate).map(key => `${key} = ?`).join(", ");
 
   // Use values from fieldsToUpdate object to update fields defined in fieldsString
-  database.prepare(`UPDATE items SET ${fieldsString} WHERE id = ?`).run(...Object.values(fieldsToUpdate), itemId);
-};
+  database.prepare(`
+    UPDATE items SET ${fieldsString}
+    WHERE id = ?
+    `).run(...Object.values(fieldsToUpdate), itemId);
 
-const deleteItem = database.transaction((itemId) => {
+  // Procure the updated item
+  const updatedItem = database.prepare(`
+    SELECT *
+    FROM items
+    WHERE id = ?  
+  `).get(itemId);
+
+  return updatedItem;
+});
+
+// Delete an item, update positions
+export const deleteItem = database.transaction((itemId) => {
+  // throw new Error("Forced transaction failure for testing");
+
   // Get the item to delete
   const itemToDelete = database.prepare("SELECT * FROM items WHERE id = ?").get(itemId);
 
   if (!itemToDelete) return;
 
   // Delete the item
-  database.prepare("DELETE FROM items WHERE id = ?").run(itemId);
+  const result = database.prepare("DELETE FROM items WHERE id = ?").run(itemId);
+  
+  if (result.changes === 0) {
+    throw new Error("Item not found or already deleted.");
+  }
 
-  // Update position on items after deleted item
+  // Update position on items with position > deleted item's position
   database.prepare("UPDATE items SET position = position - 1 WHERE position > ?").run(itemToDelete.position);
-});
 
-module.exports = { insertItem, getItems, updateItem, deleteItem };
+  return {
+    "success": true,
+    "deletedItemId": itemToDelete.id
+  };
+});
 
 /*
 // Re-index positions, starting from 1

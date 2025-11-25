@@ -19,54 +19,46 @@ function App() {
     loadItems();
   }, []);
 
-  const handleItemSave = async (updatedItem) => {
+  const handleItemSave = async (savedItemTemp) => {
     // Update item in state (optimistic update)
     setItems((prevItems) =>
       prevItems.map((prevItem) =>
-        prevItem.id === updatedItem.id ? updatedItem : prevItem
+        prevItem.id === savedItemTemp.id ? savedItemTemp : prevItem
       )
     );
 
     // Add or update item in database
     try {
-      const savedItem = updatedItem.isNew
+      const savedItem = savedItemTemp.isNew
         ? await createItem({
-          name: updatedItem.name,
-          position: updatedItem.position,
+          name: savedItemTemp.name,
+          position: savedItemTemp.position,
         })
-        : await updateItem(updatedItem);
+        : await updateItem(savedItemTemp);
 
       // If item was saved to DB, update state with that actual item
       if (savedItem) {
+        console.log("Saved Item: ", savedItem);
+
         setItems((prevItems) =>
           prevItems.map((item) =>
-            item.id === updatedItem.id ? savedItem : item
+            item.id === savedItemTemp.id ? savedItem : item
           )
         );
       }
-
-      /*
-      if (updatedItem.isNew) {
-        await addItem({
-        name: updatedItem.name,
-        position: updatedItem.position
-        });
-      } else {
-        await updateItem(updatedItem);
-      }
-      */
     } catch (error) {
       console.error("Error updating item:", error);
     }
   };
 
   // Add a new todo item below the clicked one
-  const handleAddItemBelow = async (position) => {
-    // const clickedItem = items.find(item => item.id === itemId);
-    // const newPosition = clickedItem.position + 1;
-    const newPosition = position + 1;
+  const handleAddItemBelow = async (clickedItem) => {
+    // const clickedItem = items.find(item => item.id === clickedItemId);
+    const newPosition = clickedItem.position + 1;
 
-    const newItem = {
+    // const newPosition = position + 1;
+
+    const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
       name: "",
       position: newPosition,
@@ -74,7 +66,7 @@ function App() {
     }
 
     setItems(prevItems => {
-      // Safety sort
+      // Safety sort (make sure items are sorted by position)
       const sorted = [...prevItems].sort((a, b) => a.position - b.position);
 
       // Increment item positions (after point of insertion)
@@ -88,7 +80,7 @@ function App() {
       // Insert the new item at the correct position
       return [
         ...adjusted.slice(0, newPosition - 1),
-        newItem,
+        newItemTemp,
         ...adjusted.slice(newPosition - 1)
       ];
     });
@@ -100,39 +92,41 @@ function App() {
     */
   }
 
-  const handleItemDelete = async (itemId) => {
-    // Find the item from the itemId
-    // const clickedItem = items.find(item => item.id === itemId);
-    // console.log(clickedItem);
+  const handleItemDelete = async (itemToDelete) => {
+    // Save original state in case database update fails
+    const fallbackItems = items;
 
-    // Update state by filtering out the clicked item and doing a safety sort
-    // Also recreate positions from indexes (indices?)
-
+    // Update items optimistically (remove deleted item, update positions)
     setItems(prevItems => {
-      // Remove the deleted item
-      const filtered = prevItems.filter(prevItem => prevItem.id !== itemId);
+      const filteredItems = prevItems.filter(prevItem => prevItem.id !== itemToDelete.id);
 
-      // Sort items by position
-      const sorted = filtered.sort((a, b) => a.position - b.position);
+      const updatedPositionItems = filteredItems.map((item) => {
+        if (item.position > itemToDelete.position) {
 
-      // Re-index positions
-      return sorted.map((item, index) => ({ ...item, position: index + 1 }));
+          return {
+            ...item,
+            position: item.position - 1
+          };
+        }
+
+        return item;
+      });
+
+      return updatedPositionItems;
     });
 
     // Delete item from database
     try {
-      await deleteItem(itemId);
-    } catch (error) {
-      console.error("Error deleting item: ", error);
-    }
+      const data = await deleteItem(itemToDelete.id);
 
-    /*
-    setItems(prevItems => prevItems
-      .filter(prevItem => prevItem.id !== itemId)
-      .sort((a, b) => a.position - b.position))
-      .map((item, index) => ({ ...item, position: index + 1 }));
-    ;
-    */
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+
+      setItems(fallbackItems);
+
+      alert("Deletion failed. Please try again.");
+    }
   };
 
   return (

@@ -1,10 +1,9 @@
-const { insertItem, getAllItems, getAllItemsOrdered } = require("./index");
+const { insertItem, getItems } = require("./index");
 
-insertItem("Finances");
-insertItem("Appointments");
-insertItem("Home");
-insertItem("Work");
-insertItem("Health");
+// insertItem({name: "Finances", position: 1});
+insertItem({name: "Appointments", position: 2});
+insertItem({name: "Home", position: 3});
+insertItem({name: "Work", position: 4});
+insertItem({name: "Health", position: 5});
 
-console.log(getAllItems());
-console.log(getAllItemsOrdered());
+console.log(getItems());
