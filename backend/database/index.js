@@ -20,24 +20,16 @@ database.prepare(`
 
 // Insert a single item, update positions >= new item's position (excluding new item)
 export const insertItem = database.transaction((item) => {
-  const newItemData = {
-    name: item.name.trim(),
-    position: item.position
-  };
-
-  if (typeof newItemData.name !== "string" || newItemData.name === "") {
-    throw new Error("Name must be a non-empty string.");
-  }
-
-  if (typeof newItemData.position !== "number" || newItemData.position <= 0) {
-    throw new Error("Position must be a positive number.");
-  }
+  // const newItemData = {
+  //   name: item.name.trim(),
+  //   position: item.position
+  // };
 
   // Insert a new item
   const result = database.prepare(`
     INSERT INTO items (name, position)
     VALUES (?, ?)
-  `).run(newItemData.name, newItemData.position);
+  `).run(item.name, item.position);
 
   // Get the new item
   const newItem = database.prepare(`
@@ -71,13 +63,16 @@ export const updateItem = database.transaction((itemId, fieldsToUpdate) => {
   // Create a query-friendly string with the fields to be updated
   const fieldsString = Object.keys(fieldsToUpdate).map(key => `${key} = ?`).join(", ");
 
+  // Get arrays of values to use when updating
+  const values = Object.values(fieldsToUpdate);
+
   // Use values from fieldsToUpdate object to update fields defined in fieldsString
   database.prepare(`
     UPDATE items SET ${fieldsString}
     WHERE id = ?
-    `).run(...Object.values(fieldsToUpdate), itemId);
+    `).run(values, itemId);
 
-  // Procure the updated item
+  // Procure and return the updated item
   const updatedItem = database.prepare(`
     SELECT *
     FROM items
@@ -93,8 +88,6 @@ export const deleteItem = database.transaction((itemId) => {
 
   // Get the item to delete
   const itemToDelete = database.prepare("SELECT * FROM items WHERE id = ?").get(itemId);
-
-  if (!itemToDelete) return;
 
   // Delete the item
   const result = database.prepare("DELETE FROM items WHERE id = ?").run(itemId);

@@ -1,22 +1,23 @@
-const express = require("express");
+import express from "express";
+import { insertItem, getItems, updateItem, deleteItem } from "./database/index.js";
+import { createItemSchema, updateItemSchema, paramsSchema } from "./validation/itemSchema.js";
+
 const router = express.Router();
-const { insertItem, getItems, updateItem, deleteItem } = require("./database/index");
 
 // Create (POST) an item
 router.post("/", (req, res) => {
+  // Parse contents of req.body to ensure they conform to item schema
+  const parsedBody = createItemSchema.safeParse(req.body);
+
+  if (!parsedBody.success) {
+    return res.status(400).json({ errors: parsedBody.error.errors });
+  }
+
   try {
-    // Make sure data types are correct
-    const name = String(req.body.name).trim();
-    const position = Number(req.body.position);
-
-    if (!name || !position) {
-      return res.status(400).json({ error: "Required field(s) missing." });
-    }
-
-    const newItem = insertItem({ name, position });
+    const newItem = insertItem(parsedBody.data);
 
     if (!newItem) {
-      throw new Error("Insert returned no item");
+      throw new Error("Insert returned no item.");
     }
 
     // Send new item to client 
@@ -40,12 +41,23 @@ router.get("/", (req, res) => {
 
 // Update (PATCH) an item
 router.patch("/:id", (req, res) => {
-  const itemId = req.params.id;
-  const fieldsToUpdate = req.body;
+  // Validate params
+  const parsedParams = paramsSchema.safeParse(req.params);
+
+  if (!parsedParams.success) {
+    return res.status(400).json({ errors: parsedParams.error.errors });
+  }
+
+  // Validate body
+  const parsedBody = updateItemSchema.safeParse(req.body);
+
+  if (!parsedBody.success) {
+    return res.status(400).json({ errors: parsedBody.error.errors });
+  }
 
   try {
-    const itemToUpdate = updateItem(itemId, fieldsToUpdate);
-
+    const itemToUpdate = updateItem(parsedParams.data.id, parsedBody.data);
+    
     // If item to update was not found
     if (!itemToUpdate) {
       return res.status(404).json({ success: false, message: "Item not found." });
@@ -60,8 +72,14 @@ router.patch("/:id", (req, res) => {
 
 // Delete (DELETE) an item
 router.delete("/:id", (req, res) => {
+  const parsedParams = paramsSchema.safeParse(req.params);
+
+  if (!parsedParams.success) {
+    return res.status(400).json({ errors: parsedParams.error.errors });
+  }
+
   try {
-    const data = deleteItem(req.params.id);
+    const data = deleteItem(parsedParams.data.id);
 
     if (!data) {
       return res.status(404).json({ success: false, message: "Item not found." });
@@ -75,7 +93,7 @@ router.delete("/:id", (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 /*
 // Helper: build nested tree
