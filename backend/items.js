@@ -6,8 +6,6 @@ const router = express.Router();
 
 // Create (POST) an item
 router.post("/", (req, res) => {
-  throw new Error("Simulated DB error");
-
   // Parse contents of req.body to ensure they conform to item schema
   const parsedBody = createItemSchema.safeParse(req.body);
 

@@ -20,12 +20,8 @@ function App() {
   }, []);
 
   const handleItemSave = async (savedItemTemp) => {
-    // Update item in state (optimistic update)
-    setItems((prevItems) =>
-      prevItems.map((prevItem) =>
-        prevItem.id === savedItemTemp.id ? savedItemTemp : prevItem
-      )
-    );
+    // Save user's changes to item after onBlur
+    updateItemInState(savedItemTemp);
 
     // Add or update item in database
     try {
@@ -37,59 +33,29 @@ function App() {
         : await updateItem(savedItemTemp);
 
       // If item was saved to DB, update state with that actual item
-      console.log("Saved Item: ", savedItem);
-
-      setItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === savedItemTemp.id ? savedItem : item
-        )
-      );
+      updateItemInState(savedItem);
     } catch (error) {
-      console.error("Error updating item:", error);
+      // Revert optimistic update if item could not be saved to database
+      removeItemFromUI(savedItemTemp);
 
-      // Revert optimistic update
-      setItems(prevItems => {
-        // Filter out the unsaved item
-        const filteredItems = prevItems.filter(prevItem => prevItem.id !== savedItemTemp.id);
-
-        const updatedPositionItems = filteredItems.map((item) => {
-          if (item.position > savedItemTemp.position) {
-
-            return {
-              ...item,
-              position: item.position - 1
-            };
-          }
-
-          return item;
-        });
-
-        return updatedPositionItems;
-      });
+      alert("Item could not be saved. Please try again.");
     }
   };
 
   // Add a new todo item below the clicked one
   const handleAddItemBelow = async (clickedItem) => {
-    // const clickedItem = items.find(item => item.id === clickedItemId);
     const newPosition = clickedItem.position + 1;
-
-    // const newPosition = position + 1;
 
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
       name: "",
       position: newPosition,
       isNew: true
-    }
+    };
 
     // Update items optimistically
     setItems(prevItems => {
-      // Safety sort (make sure items are sorted by position)
-      const sorted = [...prevItems].sort((a, b) => a.position - b.position);
-
-      // Increment item positions (after point of insertion)
-      const adjusted = sorted.map(item => {
+      const adjusted = prevItems.map(item => {
         if (item.position >= newPosition) {
           return { ...item, position: item.position + 1 };
         }
@@ -116,6 +82,30 @@ function App() {
     const fallbackItems = items;
 
     // Update items optimistically (remove deleted item, update positions)
+    removeItemFromUI(itemToDelete);
+
+    // Delete item from database
+    try {
+      await deleteItem(itemToDelete.id);
+    } catch (error) {
+      console.error(error);
+
+      setItems(fallbackItems);
+
+      alert("Deletion failed. Please try again.");
+    }
+  };
+
+  // Update an existing item in state with a new item
+  const updateItemInState = (item) => {
+    setItems((prevItems) =>
+      prevItems.map((prevItem) =>
+        prevItem.id === item.id ? item : prevItem
+      )
+    );
+  }
+
+  const removeItemFromUI = (itemToDelete) => {
     setItems(prevItems => {
       const filteredItems = prevItems.filter(prevItem => prevItem.id !== itemToDelete.id);
 
@@ -133,19 +123,6 @@ function App() {
 
       return updatedPositionItems;
     });
-
-    // Delete item from database
-    try {
-      const data = await deleteItem(itemToDelete.id);
-
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-
-      setItems(fallbackItems);
-
-      alert("Deletion failed. Please try again.");
-    }
   };
 
   return (

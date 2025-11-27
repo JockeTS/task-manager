@@ -1,40 +1,28 @@
 import { useState } from "react";
-import EditInput from "./EditInput";
 
 function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
-  // const [value, setValue] = useState(item.name);
-
-  /*
-  useEffect(() => {
-    if (isNew) setIsEditing(true);
-  }, [isNew]);
-  */
+  const [value, setValue] = useState(item.name);
 
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
-    // const completed = clickedItem.completed === 1 ? 0 : 1;
-    // onSave({ ...clickedItem, completed: completed });
     onSave({ ...item, completed: item.completed ? 0 : 1 });
   };
 
   /*
-  // Handle an input field losing focus
   const handleBlur = (newValue) => {
-    // Only save if item name has actually changed
-    if (newValue !== item.name) {
-      // Update item in state and database
-      onSave({ ...item, name: newValue });
+    if (newValue.trim() !== item.name) {
+      onSave({ ...item, name: newValue.trim() });
     }
 
     setIsEditing(false);
   };
   */
 
-  const handleBlur = (newValue) => {
-    if (newValue.trim() !== item.name) {
-      onSave({ ...item, name: newValue.trim() });
+  const handleBlur = () => {
+    if (value.trim() !== item.name) {
+      onSave({ ...item, name: value.trim() });
     }
 
     setIsEditing(false);
@@ -46,7 +34,6 @@ function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
       onMouseLeave={() => setIsHovered(false)}>
 
       {isEditing ? (
-        /*
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -54,9 +41,8 @@ function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
         />
-        */
 
-        <EditInput initialValue={item.name} onBlur={handleBlur} />
+        // <EditInput initialValue={item.name} onBlur={handleBlur} />
       ) : (
         <span onClick={toggleCompleted}>{item.name}</span>
       )}
@@ -76,7 +62,6 @@ function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
             onClick={(event) => {
               event.stopPropagation();
               onAddItemBelow(item);
-              // onAddItemBelow(item.id);
             }}
           >
             Add

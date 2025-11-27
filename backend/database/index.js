@@ -25,6 +25,8 @@ export const insertItem = database.transaction((item) => {
   //   position: item.position
   // };
 
+  // throw new Error("Forced transaction failure for testing");
+
   // Insert a new item
   const result = database.prepare(`
     INSERT INTO items (name, position)
@@ -84,8 +86,6 @@ export const updateItem = database.transaction((itemId, fieldsToUpdate) => {
 
 // Delete an item, update positions
 export const deleteItem = database.transaction((itemId) => {
-  // throw new Error("Forced transaction failure for testing");
-
   // Get the item to delete
   const itemToDelete = database.prepare("SELECT * FROM items WHERE id = ?").get(itemId);
 
