@@ -37,17 +37,35 @@ function App() {
         : await updateItem(savedItemTemp);
 
       // If item was saved to DB, update state with that actual item
-      if (savedItem) {
-        console.log("Saved Item: ", savedItem);
+      console.log("Saved Item: ", savedItem);
 
-        setItems((prevItems) =>
-          prevItems.map((item) =>
-            item.id === savedItemTemp.id ? savedItem : item
-          )
-        );
-      }
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === savedItemTemp.id ? savedItem : item
+        )
+      );
     } catch (error) {
       console.error("Error updating item:", error);
+
+      // Revert optimistic update
+      setItems(prevItems => {
+        // Filter out the unsaved item
+        const filteredItems = prevItems.filter(prevItem => prevItem.id !== savedItemTemp.id);
+
+        const updatedPositionItems = filteredItems.map((item) => {
+          if (item.position > savedItemTemp.position) {
+
+            return {
+              ...item,
+              position: item.position - 1
+            };
+          }
+
+          return item;
+        });
+
+        return updatedPositionItems;
+      });
     }
   };
 
@@ -65,6 +83,7 @@ function App() {
       isNew: true
     }
 
+    // Update items optimistically
     setItems(prevItems => {
       // Safety sort (make sure items are sorted by position)
       const sorted = [...prevItems].sort((a, b) => a.position - b.position);
