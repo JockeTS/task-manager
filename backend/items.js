@@ -1,5 +1,5 @@
 import express from "express";
-import { insertItem, getItems, updateItem, deleteItem } from "./database/index.js";
+import { insertItem, getItems, updateItem, deleteItem, readTestData, getItemsTree } from "./database/index.js";
 import { createItemSchema, updateItemSchema, paramsSchema } from "./validation/itemSchema.js";
 
 const router = express.Router();
@@ -15,7 +15,7 @@ router.post("/", (req, res) => {
 
   try {
     const newItem = insertItem(parsedBody.data);
-
+    
     if (!newItem) {
       throw new Error("Insert returned no item.");
     }
@@ -28,9 +28,11 @@ router.post("/", (req, res) => {
 });
 
 // Read (GET) all items, ordered by position
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const items = getItems();
+    // const items = getItems();
+    const items = getItemsTree();
+    // const items = await readTestData();
 
     // Send items to client
     res.status(200).json(items);
@@ -57,7 +59,7 @@ router.patch("/:id", (req, res) => {
 
   try {
     const itemToUpdate = updateItem(parsedParams.data.id, parsedBody.data);
-    
+
     // If item to update was not found
     if (!itemToUpdate) {
       return res.status(404).json({ success: false, message: "Item not found." });

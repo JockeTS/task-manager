@@ -2,6 +2,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import Database from "better-sqlite3";
 
+// For testing
+import fs from "fs/promises";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -12,39 +15,56 @@ const database = new Database(databasePath);
 database.prepare(`
     CREATE TABLE IF NOT EXISTS items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        parent_id INTEGER
         name TEXT NOT NULL,
         completed BOOLEAN DEFAULT 0,
-        position INTEGER DEFAULT 0
-    )    
+        position INTEGER DEFAULT 0,
+
+        FOREIGN KEY (parent_id) REFERENCES items(id) ON DELETE CASCADE
+    );    
 `).run();
 
-// Insert a single item, update positions >= new item's position (excluding new item)
-export const insertItem = database.transaction((item) => {
-  // const newItemData = {
-  //   name: item.name.trim(),
-  //   position: item.position
-  // };
+// Load test data
+export const readTestData = async () => {
+  
+  const data = JSON.parse(
+    await fs.readFile(new URL("./dst2.json", import.meta.url))
+  );
 
-  // throw new Error("Forced transaction failure for testing");
+  return data;
+};
 
-  // Insert a new item
+// Update positions, insert new item
+export const insertItem = database.transaction((newItemTemp) => {
+  console.log("newItemTemp: ", newItemTemp);
+
+  // Update positions
+  if (newItemTemp.parent_id === null) {
+    database.prepare(`
+      UPDATE items
+      SET position = position + 1
+      WHERE position >= ?
+      AND parent_id IS NULL  
+    `).run(newItemTemp.position);
+  } else {
+    database.prepare(`
+      UPDATE items
+      SET position = position + 1
+      WHERE position >= ?
+      AND parent_id = ?
+    `).run(newItemTemp.position, newItemTemp.parent_id);
+  }
+
+  // Insert the new item
   const result = database.prepare(`
-    INSERT INTO items (name, position)
-    VALUES (?, ?)
-  `).run(item.name, item.position);
+    INSERT INTO items (name, position, parent_id)
+    VALUES (?, ?, ?)
+  `).run(newItemTemp.name, newItemTemp.position, newItemTemp.parent_id);
 
   // Get the new item
   const newItem = database.prepare(`
     SELECT * FROM items WHERE id = ?
   `).get(result.lastInsertRowid);
-
-  // Update positions
-  database.prepare(`
-    UPDATE items
-    SET position = position + 1
-    WHERE position >= ?
-    AND id != ?
-  `).run(newItem.position, newItem.id);
 
   return newItem;
 });
@@ -58,7 +78,32 @@ export const getItems = () => {
   `).all();
 
   return items;
-}
+};
+
+export const getItemsTree = () => {
+  const rows = database.prepare(`
+    SELECT *
+    FROM items
+    ORDER BY 
+        CASE WHEN parent_id IS NULL THEN 0 ELSE 1 END,
+        parent_id ASC,
+        position ASC
+  `).all();
+
+  // Build tree from sorted items
+  function buildTree(items, parentId = null) {
+    return items
+      .filter(item => item.parent_id === parentId)
+      .map(item => ({
+        ...item,
+        items: buildTree(items, item.id)
+      }));
+  }
+
+  const tree = buildTree(rows);
+  // console.log(JSON.stringify(tree, null, 2));
+  return tree;
+};
 
 // Update fields of a single item
 export const updateItem = database.transaction((itemId, fieldsToUpdate) => {
@@ -91,13 +136,27 @@ export const deleteItem = database.transaction((itemId) => {
 
   // Delete the item
   const result = database.prepare("DELETE FROM items WHERE id = ?").run(itemId);
-  
+
   if (result.changes === 0) {
     throw new Error("Item not found or already deleted.");
   }
 
   // Update position on items with position > deleted item's position
-  database.prepare("UPDATE items SET position = position - 1 WHERE position > ?").run(itemToDelete.position);
+  if (itemToDelete.parent_id === null) {
+    database.prepare(`
+      UPDATE items
+      SET position = position - 1
+      WHERE position > ?
+      AND parent_id IS NULL  
+    `).run(itemToDelete.position);
+  } else {
+    database.prepare(`
+      UPDATE items
+      SET position = position - 1
+      WHERE position > ?
+      AND parent_id = ?
+    `).run(itemToDelete.position, itemToDelete.parent_id);
+  }
 
   return {
     "success": true,

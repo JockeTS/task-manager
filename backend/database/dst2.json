@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "parent_id": null,
+    "name": "Item A",
+    "position": 1,
+    "completed": 0,
+    "items": [
+      {
+        "id": 2,
+        "parent_id": 1,
+        "name": "Item B",
+        "position": 1,
+        "completed": 0,
+        "items": [
+          {
+            "id": 4,
+            "parent_id": 2,
+            "name": "Item D",
+            "position": 1,
+            "completed": 0,
+            "items": []
+          },
+          {
+            "id": 6,
+            "parent_id": 2,
+            "name": "Item F",
+            "position": 2,
+            "completed": 0,
+            "items": []
+          },
+          {
+            "id": 7,
+            "parent_id": 2,
+            "name": "Item G",
+            "position": 3,
+            "completed": 0,
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "parent_id": 1,
+        "name": "Item C",
+        "position": 2,
+        "completed": 0,
+        "items": []
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "parent_id": null,
+    "name": "Item E",
+    "position": 2,
+    "completed": 0,
+    "items": []
+  }
+]

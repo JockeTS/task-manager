@@ -3,13 +3,14 @@ export const createItem = async (newItemData) => {
   const res = await fetch(`http://localhost:8000/items/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: newItemData.name, position: newItemData.position })
+    body: JSON.stringify({ name: newItemData.name, position: newItemData.position, parent_id: newItemData.parent_id })
   });
 
   let newItem;
 
   try {
     newItem = await res.json();
+    console.log("newItem: ", newItem);
   } catch (error) {
     newItem = null;
   }

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const itemSchema = z.object({
   id: z.coerce.number(),
+  parent_id: z.coerce.number().nullable(),
   name: z.string().min(1).trim(),
   position: z.coerce.number(),
   completed: z.coerce.boolean().transform(v => v ? 1 : 0)

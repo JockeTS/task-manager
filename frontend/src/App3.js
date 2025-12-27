@@ -21,14 +21,11 @@ function App() {
   }, []);
 
   const handleItemSave = async (savedItemTemp) => {
-    // Save user's changes to item in state after onBlur
-    setItems(prevItems =>
-      updateItemInTree(prevItems, savedItemTemp.id, () => ({
-        ...savedItemTemp
-      }))
-    );
+    /*
+    // Save user's changes to item after onBlur
+    updateItemInState(savedItemTemp);
 
-    console.log("saveditemtemp: ", savedItemTemp);
+    console.log(savedItemTemp);
 
     // Add or update item in database
     try {
@@ -36,35 +33,17 @@ function App() {
         ? await createItem({
           name: savedItemTemp.name,
           position: savedItemTemp.position,
-          parent_id: savedItemTemp.parent_id
         })
         : await updateItem(savedItemTemp);
 
       // If item was saved to DB, update state with that actual item
-      setItems(prevItems =>
-        updateItemInTree(prevItems, savedItem.id, () => ({
-          ...savedItem
-        }))
-      );
-
-      // updateItemInTree(prevItems, savedItem.id, () => ({
-      //   ...savedItem
-      // }))
+      updateItemInState(savedItem);
     } catch (error) {
       // Revert optimistic update if item could not be saved to database
-      // removeItemFromUI(savedItemTemp);
+      removeItemFromUI(savedItemTemp);
 
       alert("Item could not be saved. Please try again.");
-      console.log("Error: ", error);
     }
-
-    /*
-    // Save user's changes to item after onBlur
-    updateItemInState(savedItemTemp);
-
-    console.log(savedItemTemp);
-
-
     */
 
     // const item = findItemById(savedItemTemp.id);
@@ -72,7 +51,12 @@ function App() {
 
     console.log("saved item temp: ", savedItemTemp);
 
-
+    setItems(prevItems =>
+      updateItemInTree(prevItems, savedItemTemp.id, (item) => ({
+        // completed: item.completed ? 0 : 1
+        ...savedItemTemp
+      }))
+    );
 
     /*
     setItems(prevItems =>
@@ -94,16 +78,18 @@ function App() {
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
       name: "",
-      parent_id: clickedItem.parent_id,
-      position: clickedItem.position + 1,
+      // position: newPosition,
       isNew: true
     };
 
     setItems(prevItems => {
       const newItems = insertAdjacent(prevItems, clickedItem.id, newItemTemp);
+      console.log(newItems);
 
       return newItems;
     });
+
+    console.log("all items: ", items);
 
     /*
     setItems(prevItems =>
@@ -176,7 +162,7 @@ function App() {
       }
       */
     }
-
+    
     // return prevItems;
 
     /*
@@ -197,6 +183,7 @@ function App() {
 
     setItems(prevItems => deleteItemInTree(prevItems, itemToDelete.id));
 
+    /*
     // Delete item from database
     try {
       await deleteItem(itemToDelete.id);
@@ -207,6 +194,7 @@ function App() {
 
       alert("Deletion failed. Please try again.");
     }
+    */
   };
 
   const deleteItemInTree = (items, idToRemove) => {
@@ -252,6 +240,29 @@ function App() {
     })
 
     return changed ? result : items;
+
+    /*
+    let changed = false;
+
+    const result = tree.map(item => {
+      if (item.id === id) {
+        changed = true;
+        return { ...item, ...updater(item) };
+      }
+
+      if (item.items?.length) {
+        const updatedChildren = updateItemInTree(item.items, id, updater);
+        if (updatedChildren !== item.items) {
+          changed = true;
+          return { ...item, items: updatedChildren };
+        }
+      }
+
+      return item;
+    });
+
+    return changed ? result : tree;
+    */
   }
 
   const findItemById = (id, nodes = items) => {

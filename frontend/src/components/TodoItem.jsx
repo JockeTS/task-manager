@@ -1,12 +1,19 @@
 import { useState } from "react";
 
-function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
+const fontSizes = [20, 16, 12];
+
+const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
+  // const [completed, setCompleted] = useState(item.completed);
 
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
+    // onSave({ ...item, completed: item.completed ? 0 : 1 });
+    // console.log(completed);
+    // setCompleted(completed ? 0 : 1);
+    // console.log(completed);
     onSave({ ...item, completed: item.completed ? 0 : 1 });
   };
 
@@ -21,6 +28,8 @@ function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
   */
 
   const handleBlur = () => {
+    console.log("blur: ", item);
+
     if (value.trim() !== item.name) {
       onSave({ ...item, name: value.trim() });
     }
@@ -29,53 +38,81 @@ function TodoItem({ item, onSave, onAddItemBelow, onDelete }) {
   };
 
   return (
-    <li className={`item ${item.completed ? "completed" : ""}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>
+    <li>
+      <div
+        
+        style={{ fontSize: `${fontSizes[level]}px` }}>
 
-      {isEditing ? (
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={(e) => e.key === "Enter" && handleBlur()}
-          autoFocus
-        />
+        {isEditing ? (
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={(e) => e.key === "Enter" && handleBlur()}
+            autoFocus
+          />
 
-        // <EditInput initialValue={item.name} onBlur={handleBlur} />
-      ) : (
-        <span onClick={toggleCompleted}>{item.name}</span>
-      )}
-
-      {isHovered && (
-        <div className="button-container">
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-              setIsEditing(true);
+          // <EditInput initialValue={item.name} onBlur={handleBlur} />
+        ) : (
+          <span
+            className={`item ${item.completed ? "completed" : "pending"}`}
+            onMouseEnter={(e) => {
+              // e.stopPropagation();
+              setIsHovered(true)
             }}
-          >
-            ✏️
-          </button>
-
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-              onAddItemBelow(item);
+            onMouseLeave={(e) => {
+              // e.stopPropagation();
+              setIsHovered(false)
             }}
-          >
-            Add
-          </button>
+            onClick={toggleCompleted}>{item.name}
 
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-              onDelete(item);
-            }}>
-            🗑️
-          </button>
-        </div>
-      )}
+            {isHovered && (
+              <div className="button-container">
+                <button
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsEditing(true);
+                  }}
+                >
+                  ✏️
+                </button>
+
+                <button
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onAddItemBelow(item);
+                  }}
+                >
+                  Add
+                </button>
+
+                <button
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onDelete(item);
+                  }}>
+                  🗑️
+                </button>
+              </div>
+            )}
+          </span>
+        )}
+
+        {item.items && item.items.length > 0 && (
+          <ul>
+            {item.items.map(child => (
+              <TodoItem
+                key={child.id}
+                level={level + 1}
+                item={child}
+                onSave={onSave}
+                onAddItemBelow={onAddItemBelow}
+                onDelete={onDelete}
+              />
+            ))}
+          </ul>
+        )}
+      </div>
     </li>
   );
 }
