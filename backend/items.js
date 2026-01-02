@@ -31,9 +31,10 @@ router.post("/", (req, res) => {
 router.get("/", async (req, res) => {
   try {
     // const items = getItems();
-    const items = getItemsTree();
-    // const items = await readTestData();
 
+    // const items = await readTestData();
+    const items = getItemsTree();
+    
     // Send items to client
     res.status(200).json(items);
   } catch (error) {

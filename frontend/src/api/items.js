@@ -10,7 +10,6 @@ export const createItem = async (newItemData) => {
 
   try {
     newItem = await res.json();
-    console.log("newItem: ", newItem);
   } catch (error) {
     newItem = null;
   }

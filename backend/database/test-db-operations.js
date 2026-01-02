@@ -1,15 +1,19 @@
 import Database from "better-sqlite3";
 
-// DB connection?
+// DB connection
 const db = new Database("task-manager.db");
 
+// Add parent_id column
+/*
 db.prepare(`
   ALTER TABLE items
   ADD COLUMN parent_id INTEGER DEFAULT NULL
 `).run();
 
-console.log("Migration complete");
+  console.log("Migration complete");
+*/
 
+// Insert test items
 /*
 const { insertItem, getItems } = require("./index");
 

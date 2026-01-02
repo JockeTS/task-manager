@@ -36,7 +36,6 @@ export const readTestData = async () => {
 
 // Update positions, insert new item
 export const insertItem = database.transaction((newItemTemp) => {
-  console.log("newItemTemp: ", newItemTemp);
 
   // Update positions
   if (newItemTemp.parent_id === null) {
@@ -101,7 +100,9 @@ export const getItemsTree = () => {
   }
 
   const tree = buildTree(rows);
+
   // console.log(JSON.stringify(tree, null, 2));
+
   return tree;
 };
 

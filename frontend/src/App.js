@@ -21,14 +21,14 @@ function App() {
   }, []);
 
   const handleItemSave = async (savedItemTemp) => {
+    const fallbackItems = items;
+
     // Save user's changes to item in state after onBlur
     setItems(prevItems =>
       updateItemInTree(prevItems, savedItemTemp.id, () => ({
         ...savedItemTemp
       }))
     );
-
-    console.log("saveditemtemp: ", savedItemTemp);
 
     // Add or update item in database
     try {
@@ -46,51 +46,20 @@ function App() {
           ...savedItem
         }))
       );
-
-      // updateItemInTree(prevItems, savedItem.id, () => ({
-      //   ...savedItem
-      // }))
     } catch (error) {
+      console.log("Error: ", error);
+
       // Revert optimistic update if item could not be saved to database
-      // removeItemFromUI(savedItemTemp);
+      setItems(fallbackItems);
 
       alert("Item could not be saved. Please try again.");
-      console.log("Error: ", error);
     }
-
-    /*
-    // Save user's changes to item after onBlur
-    updateItemInState(savedItemTemp);
-
-    console.log(savedItemTemp);
-
-
-    */
-
-    // const item = findItemById(savedItemTemp.id);
-    // console.log("Found item: ", item);
-
-    console.log("saved item temp: ", savedItemTemp);
-
-
-
-    /*
-    setItems(prevItems =>
-      updateItemInTree(prevItems, savedItemTemp.id, {
-        completed: savedItemTemp.completed ? 0 : 1
-      })
-    );
-    */
   };
 
   // Add a new todo item below the clicked one
   const handleAddItemBelow = async (clickedItem) => {
-    // console.log("cliikked item: ", clickedItem);
 
-    // const parentId = clickedItem.parent_id;
-
-    // const newPosition = clickedItem.position + 1;
-
+    // Props for the new item
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
       name: "",
@@ -99,55 +68,20 @@ function App() {
       isNew: true
     };
 
+    // Add item to UI (onBlur saves it to db)
     setItems(prevItems => {
       const newItems = insertAdjacent(prevItems, clickedItem.id, newItemTemp);
 
       return newItems;
     });
-
-    /*
-    setItems(prevItems =>
-      updateItemInTree(prevItems, clickedItem.id, (item) => ({
-        completed: item.completed ? 0 : 1
-      }))
-    );
-    */
-
-    // Insert temporary item below clicked item
-
-    /*
-    // Update items optimistically
-    setItems(prevItems => {
-      const adjusted = prevItems.map(item => {
-        if (item.position >= newPosition) {
-          return { ...item, position: item.position + 1 };
-        }
-        return item;
-      });
-
-      // Insert the new item at the correct position
-      return [
-        ...adjusted.slice(0, newPosition - 1),
-        newItemTemp,
-        ...adjusted.slice(newPosition - 1)
-      ];
-    });
-    */
-
-    /* 
-    The new item is not saved to the database right away, but rather auto-focused.
-    When the user presses Enter or clicks outside the input field, the item's onBlur effect is triggered.
-    This is how the item is saved to the database.
-    */
   }
 
+  // Insert new item adjacent to (below by default) another item with same parent_id (or null)
   function insertAdjacent(prevItems, targetId, newItem) {
     const targetIndex = prevItems.findIndex(item => item.id === targetId);
 
     // Check if target among current top-level items (if not, recurse)
     if (targetIndex !== -1) {
-      console.log("indeks: ", targetIndex);
-
       const insertIndex = targetIndex + 1; // Insert item after target (below)
 
       return [
@@ -166,34 +100,12 @@ function App() {
 
         return item;
       });
-      /*
-      for (const i of prevItems) {
-        console.log("item: ", i);
-
-        if (i.items?.length) {
-          i.items = insertAdjacent(i.items, targetId, newItem);
-        }
-      }
-      */
     }
-
-    // return prevItems;
-
-    /*
-    const newItems = prevItems.map((item) => {
-      console.log(item);
-      return item;
-    });
-
-    return newItems;
-    */
   };
 
   const handleItemDelete = async (itemToDelete) => {
     // Save original state in case database update fails
     const fallbackItems = items;
-
-    console.log("item to delete: ", itemToDelete);
 
     setItems(prevItems => deleteItemInTree(prevItems, itemToDelete.id));
 
@@ -210,8 +122,6 @@ function App() {
   };
 
   const deleteItemInTree = (items, idToRemove) => {
-    console.log("level");
-
     // Filter out itemToDelete if on current level
     const filtered = items.filter(item => item.id !== idToRemove);
 
