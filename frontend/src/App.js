@@ -20,6 +20,12 @@ function App() {
     loadItems();
   }, []);
 
+  function getMaxDepth(items) {
+    if (!items || items.length === 0) return 0;
+
+    return 1 + Math.max(...items.map(item => getMaxDepth(item.items)));
+  }
+
   const handleItemSave = async (savedItemTemp) => {
     const fallbackItems = items;
 
@@ -185,6 +191,8 @@ function App() {
     return null;
   }
 
+  const treeDepth = getMaxDepth(items);
+
   return (
     <div style={{ padding: "2rem" }}>
       <h1>My To-Do Items</h1>
@@ -192,7 +200,7 @@ function App() {
         {items.map((item) => (
           <TodoItem
             key={item.id}
-            level={0}
+            level={treeDepth}
             item={item}
             onSave={handleItemSave}
             onAddItemBelow={handleAddItemBelow}

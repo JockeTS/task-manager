@@ -18,46 +18,30 @@ ul {
   margin: 0;
 }
 
-li {
-  display: block;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-li:not(:last-child) {
-  margin-bottom: 0.5rem;
-}
-
-.button-container {
-  display: inline;
-}
-
-.item {
-  
-  /*
-  line-height: 1.6;
-  display: flex;
-  width: fit-content;
-  align-items: center;
-  padding: 0 1em;
-  gap: 0;
-  */
-}
-
-.button-container {
-  margin: 0 0.5em;
-}
-
-.item button {
+button {
   margin: 0 0.25em;
 }
 
-.item.pending {
+.todo-item {
+  display: block;
+  width: fit-content;
+  cursor: pointer;
+  transition: 0.2s;
+  padding: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.pending {
   text-decoration: none;
   opacity: 1;
 }
 
-.item.completed {
+.completed {
   text-decoration: line-through;
   opacity: 0.6;
+}
+
+.button-container {
+  margin: 0 0.5em;
+  display: inline;
 }

@@ -8,28 +8,15 @@ const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
   const [value, setValue] = useState(item.name);
   // const [completed, setCompleted] = useState(item.completed);
 
+  const fontSize = 8 + (4 * level);
+
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
-    // onSave({ ...item, completed: item.completed ? 0 : 1 });
-    // console.log(completed);
-    // setCompleted(completed ? 0 : 1);
-    // console.log(completed);
     onSave({ ...item, completed: item.completed ? 0 : 1 });
   };
 
-  /*
-  const handleBlur = (newValue) => {
-    if (newValue.trim() !== item.name) {
-      onSave({ ...item, name: newValue.trim() });
-    }
-
-    setIsEditing(false);
-  };
-  */
-
+  // Handle input field being exited
   const handleBlur = () => {
-    console.log("blur: ", item);
-
     if (value.trim() !== item.name) {
       onSave({ ...item, name: value.trim() });
     }
@@ -38,81 +25,82 @@ const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
   };
 
   return (
-    <li>
-      <div
-        
-        style={{ fontSize: `${fontSizes[level]}px` }}>
+    <li className="todo-item" style={{ fontSize: `${fontSize}px` }}>
 
-        {isEditing ? (
-          <input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onBlur={handleBlur}
-            onKeyDown={(e) => e.key === "Enter" && handleBlur()}
-            autoFocus
-          />
+      {/* Change from text to input if item is being edited */}
+      {isEditing ? (
+        // <EditInput initialValue={item.name} onBlur={handleBlur} />
 
-          // <EditInput initialValue={item.name} onBlur={handleBlur} />
-        ) : (
-          <span
-            className={`item ${item.completed ? "completed" : "pending"}`}
-            onMouseEnter={(e) => {
-              // e.stopPropagation();
-              setIsHovered(true)
-            }}
-            onMouseLeave={(e) => {
-              // e.stopPropagation();
-              setIsHovered(false)
-            }}
-            onClick={toggleCompleted}>{item.name}
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={(e) => e.key === "Enter" && handleBlur()}
+          autoFocus
+        />
+      ) : ( // Show text span if item is not being edited
+        <span className={`${item.completed ? "completed" : "pending"}`}
 
-            {isHovered && (
-              <div className="button-container">
-                <button
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setIsEditing(true);
-                  }}
-                >
-                  ✏️
-                </button>
+          // Activate or deactivate hovered state when mouse enters or leaves item
+          onMouseEnter={(e) => {
+            setIsHovered(true)
+          }}
 
-                <button
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onAddItemBelow(item);
-                  }}
-                >
-                  Add
-                </button>
+          onMouseLeave={(e) => {
+            setIsHovered(false)
+          }}
 
-                <button
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onDelete(item);
-                  }}>
-                  🗑️
-                </button>
-              </div>
-            )}
-          </span>
-        )}
+          onClick={toggleCompleted}>
 
-        {item.items && item.items.length > 0 && (
-          <ul>
-            {item.items.map(child => (
-              <TodoItem
-                key={child.id}
-                level={level + 1}
-                item={child}
-                onSave={onSave}
-                onAddItemBelow={onAddItemBelow}
-                onDelete={onDelete}
-              />
-            ))}
-          </ul>
-        )}
-      </div>
+          {item.name}
+
+          {/* Show action buttons when item is hovered */}
+          {isHovered && (
+            <div className="button-container">
+              <button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsEditing(true);
+                }}
+
+                style={{ fontSize: `${fontSize}px` }}
+              > ✏️
+              </button>
+
+              <button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onAddItemBelow(item);
+                }}
+              > Add
+              </button>
+
+              <button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDelete(item);
+                }}> 🗑️
+              </button>
+            </div>
+          )}
+        </span>
+      )}
+
+      {/* Render any potential child items */}
+      {item.items && item.items.length > 0 && (
+        <ul>
+          {item.items.map(child => (
+            <TodoItem
+              key={child.id}
+              level={level - 1}
+              item={child}
+              onSave={onSave}
+              onAddItemBelow={onAddItemBelow}
+              onDelete={onDelete}
+            />
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
