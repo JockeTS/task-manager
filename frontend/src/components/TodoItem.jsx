@@ -2,13 +2,13 @@ import { useState } from "react";
 
 const fontSizes = [20, 16, 12];
 
-const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
+const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
   // const [completed, setCompleted] = useState(item.completed);
 
-  const fontSize = 8 + (4 * level);
+  const fontSize = 16 + (4 * (level - 1));
 
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
@@ -25,7 +25,11 @@ const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
   };
 
   return (
-    <li className="todo-item" style={{ fontSize: `${fontSize}px` }}>
+    <li className="todo-item"
+      style={{
+        fontSize: `${fontSize}px`,
+
+      }}>
 
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
@@ -58,6 +62,7 @@ const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
           {isHovered && (
             <div className="button-container">
               <button
+                className="action-button"
                 onClick={(event) => {
                   event.stopPropagation();
                   setIsEditing(true);
@@ -68,18 +73,36 @@ const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
               </button>
 
               <button
+                className="action-button"
                 onClick={(event) => {
                   event.stopPropagation();
-                  onAddItemBelow(item);
+                  onAddSiblingItem(item);
                 }}
-              > Add
+
+                style={{ fontSize: `${fontSize}px` }}
+              > ↓ +
               </button>
 
               <button
+                className="action-button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onAddSubItem(item);
+                }}
+
+                style={{ fontSize: `${fontSize}px` }}
+              > ↳ +
+              </button>
+
+              <button
+                className="action-button"
                 onClick={(event) => {
                   event.stopPropagation();
                   onDelete(item);
-                }}> 🗑️
+                }}
+
+                style={{ fontSize: `${fontSize}px` }}
+              > 🗑️
               </button>
             </div>
           )}
@@ -88,14 +111,15 @@ const TodoItem = ({ level, item, onSave, onAddItemBelow, onDelete }) => {
 
       {/* Render any potential child items */}
       {item.items && item.items.length > 0 && (
-        <ul>
+        <ul className="todo-list">
           {item.items.map(child => (
             <TodoItem
               key={child.id}
               level={level - 1}
               item={child}
               onSave={onSave}
-              onAddItemBelow={onAddItemBelow}
+              onAddSiblingItem={onAddSiblingItem}
+              onAddSubItem={onAddSubItem}
               onDelete={onDelete}
             />
           ))}

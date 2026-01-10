@@ -29,14 +29,14 @@ function App() {
   const handleItemSave = async (savedItemTemp) => {
     const fallbackItems = items;
 
-    // Save user's changes to item in state after onBlur
+    // 1. Optimistic update (fine)
     setItems(prevItems =>
-      updateItemInTree(prevItems, savedItemTemp.id, () => ({
+      updateItemInTree(prevItems, savedItemTemp.id, item => ({
+        ...item,
         ...savedItemTemp
       }))
     );
 
-    // Add or update item in database
     try {
       const savedItem = savedItemTemp.isNew
         ? await createItem({
@@ -46,25 +46,25 @@ function App() {
         })
         : await updateItem(savedItemTemp);
 
-      // If item was saved to DB, update state with that actual item
+      // 2. Replace TEMP item using TEMP id
       setItems(prevItems =>
-        updateItemInTree(prevItems, savedItem.id, () => ({
-          ...savedItem
+        updateItemInTree(prevItems, savedItemTemp.id, item => ({
+          ...item,          // keep children, UI state
+          ...savedItem,     // apply DB values
+          id: savedItem.id, // IMPORTANT: swap temp id → real id
+          isNew: false
         }))
       );
     } catch (error) {
       console.log("Error: ", error);
 
-      // Revert optimistic update if item could not be saved to database
       setItems(fallbackItems);
-
       alert("Item could not be saved. Please try again.");
     }
   };
 
   // Add a new todo item below the clicked one
-  const handleAddItemBelow = async (clickedItem) => {
-
+  const handleAddSiblingItem = (clickedItem) => {
     // Props for the new item
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
@@ -81,6 +81,29 @@ function App() {
       return newItems;
     });
   }
+
+  const handleAddSubItem = (clickedItem) => {
+    const position = clickedItem.items?.length + 1 || 1;
+
+    const newItemTemp = {
+      id: `temp-${crypto.randomUUID()}`,
+      name: "",
+      parent_id: clickedItem.id,
+      position,
+      isNew: true,
+      items: []
+    };
+
+    // Do not mutate clickedItem
+    const updatedClickedItem = {
+      ...clickedItem,
+      items: [...(clickedItem.items || []), newItemTemp]
+    };
+
+    setItems(prevItems =>
+      updateItemInTree(prevItems, clickedItem.id, () => updatedClickedItem)
+    );
+  };
 
   // Insert new item adjacent to (below by default) another item with same parent_id (or null)
   function insertAdjacent(prevItems, targetId, newItem) {
@@ -170,6 +193,7 @@ function App() {
     return changed ? result : items;
   }
 
+  /*
   const findItemById = (id, nodes = items) => {
     // Check each node on current level in turn
     for (const node of nodes) {
@@ -190,25 +214,42 @@ function App() {
 
     return null;
   }
+  */
 
   const treeDepth = getMaxDepth(items);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>My To-Do Items</h1>
-      <ul>
-        {items.map((item) => (
-          <TodoItem
-            key={item.id}
-            level={treeDepth}
-            item={item}
-            onSave={handleItemSave}
-            onAddItemBelow={handleAddItemBelow}
-            onDelete={handleItemDelete}
-          />
-        ))}
-      </ul>
-    </div>
+    <main className="content">
+      <header>
+        <h1 id="title">Recurso - Task Manager</h1>
+
+        <button id="new-item-btn" className="full-width-button">
+          + Add New Item
+        </button>
+      </header>
+
+      <div className="list-container">
+        <ul className="todo-list">
+          {items.map((item) => (
+            <TodoItem
+              key={item.id}
+              level={treeDepth}
+              item={item}
+              onSave={handleItemSave}
+              onAddSiblingItem={handleAddSiblingItem}
+              onAddSubItem={handleAddSubItem}
+              onDelete={handleItemDelete}
+            />
+          ))}
+        </ul>
+      </div>
+
+      <footer>
+        <button id="reset-btn" className="full-width-button">
+          - Reset List
+        </button>
+      </footer>
+    </main>
   );
 }
 
