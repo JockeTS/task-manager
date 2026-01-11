@@ -15,7 +15,7 @@ const database = new Database(databasePath);
 database.prepare(`
     CREATE TABLE IF NOT EXISTS items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        parent_id INTEGER
+        parent_id INTEGER,
         name TEXT NOT NULL,
         completed BOOLEAN DEFAULT 0,
         position INTEGER DEFAULT 0,
@@ -26,7 +26,7 @@ database.prepare(`
 
 // Load test data
 export const readTestData = async () => {
-  
+
   const data = JSON.parse(
     await fs.readFile(new URL("./dst2.json", import.meta.url))
   );
@@ -164,6 +164,20 @@ export const deleteItem = database.transaction((itemId) => {
     "deletedItemId": itemToDelete.id
   };
 });
+
+// Delete all items, resetting the list
+export const deleteItems = () => {
+
+  const result = database.prepare("DELETE FROM items").run();
+
+  if (result.changes === 0) {
+    throw new Error("Item not found or already deleted.");
+  }
+
+  return {
+    "success": true
+  };
+};
 
 /*
 // Re-index positions, starting from 1

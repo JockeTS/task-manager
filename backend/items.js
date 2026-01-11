@@ -1,5 +1,5 @@
 import express from "express";
-import { insertItem, getItems, updateItem, deleteItem, readTestData, getItemsTree } from "./database/index.js";
+import { insertItem, getItems, updateItem, deleteItem, deleteItems, readTestData, getItemsTree } from "./database/index.js";
 import { createItemSchema, updateItemSchema, paramsSchema } from "./validation/itemSchema.js";
 
 const router = express.Router();
@@ -87,6 +87,20 @@ router.delete("/:id", (req, res) => {
     if (!data) {
       return res.status(404).json({ success: false, message: "Item not found." });
     }
+
+    // Send data to client
+    res.status(200).json(data);
+  } catch (error) {
+    // Send error message to client
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
+});
+
+// Delete (DELETE) all items
+router.delete("/", (req, res) => {
+
+  try {
+    const data = deleteItems();
 
     // Send data to client
     res.status(200).json(data);

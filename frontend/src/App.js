@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchItems, updateItem, createItem, deleteItem } from "./api/items";
+import { fetchItems, updateItem, createItem, deleteItem, deleteItems } from "./api/items";
 import TodoItem from "./components/TodoItem";
 
 function App() {
@@ -27,6 +27,7 @@ function App() {
   }
 
   const handleItemSave = async (savedItemTemp) => {
+
     const fallbackItems = items;
 
     // 1. Optimistic update (fine)
@@ -63,8 +64,27 @@ function App() {
     }
   };
 
+  // Add a new top-level item at the end of items[]
+  const addTopItem = () => {
+
+    const newItemTemp = {
+      id: `temp-${crypto.randomUUID()}`,
+      name: "",
+      parent_id: null,
+      position: items.length + 1,
+      isNew: true
+    };
+
+    setItems(prevItems => {
+      const newItems = [...prevItems, newItemTemp];
+
+      return newItems;
+    });
+  };
+
   // Add a new todo item below the clicked one
   const handleAddSiblingItem = (clickedItem) => {
+
     // Props for the new item
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
@@ -103,6 +123,21 @@ function App() {
     setItems(prevItems =>
       updateItemInTree(prevItems, clickedItem.id, () => updatedClickedItem)
     );
+  };
+
+  // Delete all items
+  const handleResetList = async () => {
+    const confirmation = window.confirm("Are you sure you want to reset your list?");
+
+    if (!confirmation) return;
+
+    try {
+      await deleteItems();
+      setItems([]);
+    } catch (error) {
+      console.error("Failed to reset list: ", error);
+      alert("Could not reset list. Please try again.");
+    }
   };
 
   // Insert new item adjacent to (below by default) another item with same parent_id (or null)
@@ -223,7 +258,7 @@ function App() {
       <header>
         <h1 id="title">Recurso - Task Manager</h1>
 
-        <button id="new-item-btn" className="full-width-button">
+        <button id="new-item-btn" className="full-width-button" onClick={addTopItem}>
           + Add New Item
         </button>
       </header>
@@ -245,7 +280,7 @@ function App() {
       </div>
 
       <footer>
-        <button id="reset-btn" className="full-width-button">
+        <button id="reset-btn" className="full-width-button" onClick={handleResetList}>
           - Reset List
         </button>
       </footer>

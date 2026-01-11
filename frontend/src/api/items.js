@@ -85,3 +85,24 @@ export const deleteItem = async (itemId) => {
 
   return success;
 };
+
+// Delete all items or throw an error if unsuccessful
+export const deleteItems = async () => {
+  const res = await fetch("http://localhost:8000/items/", {
+    method: "DELETE",
+  });
+
+  let success;
+
+  try {
+    success = await res.json();
+  } catch {
+    success = null;
+  }
+
+  if (!res.ok) {
+    throw new Error(success?.message || "Delete items failed.");
+  }
+
+  return success;
+};
