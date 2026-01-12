@@ -13,6 +13,13 @@ code {
     monospace;
 }
 
+main.content {
+  border: 1px solid black;
+  background-color: white;
+  max-width: 500px;
+  margin: 1rem auto;
+}
+
 main header {
   background-color: #f0dbd0;
   display: flex;
@@ -20,6 +27,7 @@ main header {
   text-align: center;
 }
 
+/* Full-width buttons */
 .full-width-button {
   display: block;
   width: 100%;
@@ -47,13 +55,7 @@ main header {
   background-color: #e0a800;
 }
 
-main.content {
-  border: 1px solid black;
-  background-color: white;
-  max-width: 500px;
-  margin: 1rem auto;
-}
-
+/* Todo list */
 .list-container {
   padding: 1rem;
 }
@@ -82,20 +84,20 @@ main.content {
   opacity: 0.6;
 }
 
+/* Action buttons */
 .button-container {
   margin: 0 0.5em;
   display: inline;
 }
 
 .action-button {
-  margin: 0 0.25em;
-
-  padding: 0;           /* remove extra padding */
-  line-height: 1;       /* prevents extra height */
-  height: 1em;          /* make button exactly match font-size */
-  display: inline-flex; /* centers content nicely */
+  height: 1em;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin: 0 0.25em;
+  padding: 0;
+  line-height: 1;
   border: none;
   cursor: pointer;
 }

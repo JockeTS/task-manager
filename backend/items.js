@@ -111,12 +111,3 @@ router.delete("/", (req, res) => {
 });
 
 export default router;
-
-/*
-// Helper: build nested tree
-function buildTree(items, parentId = null) {
-  return items
-    .filter(item => item.parent_id === parentId)
-    .map(item => ({ ...item, items: buildTree(items, item.id) }));
-}
-*/
