@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-const fontSizes = [20, 16, 12];
-
 const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
@@ -26,10 +24,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
   return (
     <li className="todo-item"
-      style={{
-        fontSize: `${fontSize}px`,
-
-      }}>
+      style={{ fontSize: `${fontSize}px` }}>
 
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
