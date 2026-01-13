@@ -1,29 +1,10 @@
 import { useEffect, useState } from "react";
 import { fetchItems, updateItem, createItem, deleteItem, deleteItems } from "./api/items";
 
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-
 import TodoItem from "./components/TodoItem";
-import { SortableTodoItem } from "./components/SortableTodoItem";
 
 function App() {
   const [items, setItems] = useState([]);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor)
-  );
 
   // Fetch items from database
   useEffect(() => {
@@ -271,20 +252,6 @@ function App() {
   }
   */
 
-  function handleDragEnd(event) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    setItems(prevItems => {
-      const oldIndex = prevItems.findIndex(i => i.id === active.id);
-      const newIndex = prevItems.findIndex(i => i.id === over.id);
-      const newItems = arrayMove(prevItems, oldIndex, newIndex);
-
-      // Optionally recalc `position` after reordering
-      return newItems.map((item, index) => ({ ...item, position: index + 1 }));
-    });
-  }
-
   const treeDepth = getMaxDepth(items);
 
   return (
@@ -297,27 +264,6 @@ function App() {
         </button>
       </header>
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-          <div className="list-container">
-            <ul className="todo-list">
-              {items.map(item => (
-                <SortableTodoItem
-                  key={item.id}
-                  level={treeDepth}
-                  item={item}
-                  onSave={handleItemSave}
-                  onAddSiblingItem={handleAddSiblingItem}
-                  onAddSubItem={handleAddSubItem}
-                  onDelete={handleItemDelete}
-                />
-              ))}
-            </ul>
-          </div>
-        </SortableContext>
-      </DndContext>
-
-      {/*
       <div className="list-container">
         <ul className="todo-list">
           {items.map((item) => (
@@ -333,7 +279,6 @@ function App() {
           ))}
         </ul>
       </div>
-      */}
 
       <footer>
         <button id="reset-btn" className="full-width-button" onClick={handleResetList}>

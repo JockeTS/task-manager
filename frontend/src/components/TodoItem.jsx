@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SortableTodoItem } from "./SortableTodoItem";
 
 const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -23,8 +24,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   };
 
   return (
-    <li className="todo-item"
-      style={{ fontSize: `${fontSize}px` }}>
+    <div className="todo-item" style={{fontSize: `${fontSize}px`}}>
 
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
@@ -108,6 +108,24 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
       {item.items && item.items.length > 0 && (
         <ul className="todo-list">
           {item.items.map(child => (
+            <SortableTodoItem
+              key={child.id}
+              id={child.id}          // dnd-kit needs this
+              level={level - 1}
+              item={child}
+              onSave={onSave}
+              onAddSiblingItem={onAddSiblingItem}
+              onAddSubItem={onAddSubItem}
+              onDelete={onDelete}
+            />
+          ))}
+        </ul>
+      )}
+
+      {/*
+      {item.items && item.items.length > 0 && (
+        <ul className="todo-list">
+          {item.items.map(child => (
             <TodoItem
               key={child.id}
               level={level - 1}
@@ -120,7 +138,9 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           ))}
         </ul>
       )}
-    </li>
+      */}
+
+    </div>
   );
 }
 
