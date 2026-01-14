@@ -275,9 +275,84 @@ function App() {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
+    setItems(prevItems =>
+      moveItem(prevItems, active.id, over.id)
+    );
+  }
+
+  function moveItem(items, sourceId, targetId) {
+    // 1. Remove
+    const { items: withoutSource, removedItem } =
+      removeItemFromTree(items, sourceId);
+
+    if (!removedItem) return items;
+
+    // 2. Insert
+    const updatedTree =
+      insertItemBelow(withoutSource, targetId, removedItem);
+
+    return updatedTree;
+  }
+
+
+  function removeItemFromTree(items, idToRemove) {
+    let removedItem = null;
+
+    const newItems = items
+      .map(item => {
+        if (item.id === idToRemove) {
+          removedItem = item;
+          return null;
+        }
+
+        if (item.items) {
+          const result = removeItemFromTree(item.items, idToRemove);
+          if (result.removedItem) {
+            removedItem = result.removedItem;
+            return {
+              ...item,
+              items: result.items
+            };
+          }
+        }
+
+        return item;
+      })
+      .filter(Boolean);
+
+    return { items: newItems, removedItem };
+  }
+
+  function insertItemBelow(items, targetId, itemToInsert) {
+    return items.flatMap(item => {
+      if (item.id === targetId) {
+        return [item, itemToInsert];
+      }
+
+      if (item.items) {
+        return [{
+          ...item,
+          items: insertItemBelow(item.items, targetId, itemToInsert)
+        }];
+      }
+
+      return [item];
+    });
+  }
+
+
+  /*
+  function handleDragEnd(event) {
+    const { active, over } = event;
+
+    console.log("active id: ", active);
+    console.log("over id: ", over);
+
+    if (!over || active.id === over.id) return;
+
     setItems(prevItems => {
-      const oldIndex = prevItems.findIndex(i => i.id === active.id);
-      const newIndex = prevItems.findIndex(i => i.id === over.id);
+      const oldIndex = prevItems.findIndex(i => i.id === active.id); // console.log("old index: ", oldIndex);
+      const newIndex = prevItems.findIndex(i => i.id === over.id); // console.log("new index: ", newIndex);
       const newItems = arrayMove(prevItems, oldIndex, newIndex);
 
       // Optionally recalc `position` after reordering
@@ -285,7 +360,6 @@ function App() {
     });
   }
   
-  /*
   function handleDragEnd(event) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -320,7 +394,7 @@ function App() {
     const insertIndex = newTree.findIndex(n => n.id === overId);
 
     if (insertIndex !== -1) {
-      newTree.splice(insertIndex, 0, itemToMove);
+      newTree.splice(insertIndex + 1, 0, itemToMove);
     } else {
       // insert recursively into children if not found at this level
       for (const node of newTree) {
