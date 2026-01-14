@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { SortableTodoItem } from "./SortableTodoItem";
 
-const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete }) => {
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+
+const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete, dragHandleProps }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
@@ -24,7 +30,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   };
 
   return (
-    <div className="todo-item" style={{fontSize: `${fontSize}px`}}>
+    <div className="todo-item" style={{ fontSize: `${fontSize}px` }}>
 
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
@@ -56,6 +62,15 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           {/* Show action buttons when item is hovered */}
           {isHovered && (
             <div className="button-container">
+              <button
+                className="action-button"
+                {...dragHandleProps.attributes}
+                {...dragHandleProps.listeners}
+                onClick={(e) => e.stopPropagation()}
+              >
+                ⠿
+              </button>
+
               <button
                 className="action-button"
                 onClick={(event) => {
@@ -106,6 +121,28 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
       {/* Render any potential child items */}
       {item.items && item.items.length > 0 && (
+        <SortableContext
+          items={item.items.map(child => child.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <ul className="todo-list">
+            {item.items.map(child => (
+              <SortableTodoItem
+                key={child.id}
+                item={child}
+                level={level - 1}
+                onSave={onSave}
+                onAddSiblingItem={onAddSiblingItem}
+                onAddSubItem={onAddSubItem}
+                onDelete={onDelete}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      )}
+
+      {/*
+      {item.items && item.items.length > 0 && (
         <ul className="todo-list">
           {item.items.map(child => (
             <SortableTodoItem
@@ -122,7 +159,6 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
         </ul>
       )}
 
-      {/*
       {item.items && item.items.length > 0 && (
         <ul className="todo-list">
           {item.items.map(child => (

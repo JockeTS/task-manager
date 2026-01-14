@@ -284,6 +284,58 @@ function App() {
       return newItems.map((item, index) => ({ ...item, position: index + 1 }));
     });
   }
+  
+  /*
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setItems(prevItems =>
+      moveItem(prevItems, active.id, over.id)
+    );
+  }
+
+  // Recursive helper
+  function moveItem(tree, activeId, overId) {
+    let itemToMove = null;
+
+    // Step 1: remove active item from the tree
+    const newTree = tree
+      .map(node => {
+        if (node.id === activeId) {
+          itemToMove = node;
+          return null; // remove
+        }
+        if (node.items?.length) {
+          node.items = moveItem(node.items, activeId, overId).tree;
+          if (!itemToMove) itemToMove = moveItem(node.items, activeId, overId).itemToMove;
+        }
+        return node;
+      })
+      .filter(Boolean);
+
+    if (!itemToMove) return newTree;
+
+    // Step 2: find where to insert
+    const insertIndex = newTree.findIndex(n => n.id === overId);
+
+    if (insertIndex !== -1) {
+      newTree.splice(insertIndex, 0, itemToMove);
+    } else {
+      // insert recursively into children if not found at this level
+      for (const node of newTree) {
+        if (node.items?.length) {
+          node.items = moveItem(node.items, activeId, overId).tree;
+        }
+      }
+    }
+
+    // Step 3: recalc positions for this level
+    newTree.forEach((n, i) => (n.position = i + 1));
+
+    return newTree;
+  }
+  */
 
   const treeDepth = getMaxDepth(items);
 
