@@ -248,168 +248,76 @@ function App() {
     return changed ? result : items;
   }
 
-  /*
-  const findItemById = (id, nodes = items) => {
-    // Check each node on current level in turn
-    for (const node of nodes) {
-      // Return node if it matches the id
-      if (node.id === id) {
-        return node;
-      }
-
-      // If not, check its child nodes (if any)
-      if (node.items.length > 0) {
-        const found = findItemById(id, node.items);
-
-        if (found) {
-          return found;
-        }
-      }
-    }
-
-    return null;
-  }
-  */
-
+  // Runs when an item is dropped over another
   function handleDragEnd(event) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    setItems(prevItems =>
-      moveItem(prevItems, active.id, over.id)
-    );
-  }
-
-  function moveItem(items, sourceId, targetId) {
-    // 1. Remove
-    const { items: withoutSource, removedItem } =
-      removeItemFromTree(items, sourceId);
-
-    if (!removedItem) return items;
-
-    // 2. Insert
-    const updatedTree =
-      insertItemBelow(withoutSource, targetId, removedItem);
-
-    return updatedTree;
-  }
-
-
-  function removeItemFromTree(items, idToRemove) {
-    let removedItem = null;
-
-    const newItems = items
-      .map(item => {
-        if (item.id === idToRemove) {
-          removedItem = item;
-          return null;
-        }
-
-        if (item.items) {
-          const result = removeItemFromTree(item.items, idToRemove);
-          if (result.removedItem) {
-            removedItem = result.removedItem;
-            return {
-              ...item,
-              items: result.items
-            };
-          }
-        }
-
-        return item;
-      })
-      .filter(Boolean);
-
-    return { items: newItems, removedItem };
-  }
-
-  function insertItemBelow(items, targetId, itemToInsert) {
-    return items.flatMap(item => {
-      if (item.id === targetId) {
-        return [item, itemToInsert];
-      }
-
-      if (item.items) {
-        return [{
-          ...item,
-          items: insertItemBelow(item.items, targetId, itemToInsert)
-        }];
-      }
-
-      return [item];
-    });
-  }
-
-
-  /*
-  function handleDragEnd(event) {
+    // Get dragged item and target item
     const { active, over } = event;
 
-    console.log("active id: ", active);
-    console.log("over id: ", over);
-
+    // If no target item or active and target are same, return
     if (!over || active.id === over.id) return;
 
     setItems(prevItems => {
-      const oldIndex = prevItems.findIndex(i => i.id === active.id); // console.log("old index: ", oldIndex);
-      const newIndex = prevItems.findIndex(i => i.id === over.id); // console.log("new index: ", newIndex);
-      const newItems = arrayMove(prevItems, oldIndex, newIndex);
+      const parentArray = findParentArray(prevItems, active.id);
 
-      // Optionally recalc `position` after reordering
-      return newItems.map((item, index) => ({ ...item, position: index + 1 }));
+      if (!parentArray) return prevItems;
+
+      const oldIndex = parentArray.findIndex(i => i.id === active.id);
+      const newIndex = parentArray.findIndex(i => i.id === over.id);
+
+      const newArray = arrayMove(parentArray, oldIndex, newIndex);
+
+      // Replace the changed array in the tree structure
+      return replaceArrayInTree(prevItems, parentArray, newArray);
     });
   }
-  
-  function handleDragEnd(event) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
 
-    setItems(prevItems =>
-      moveItem(prevItems, active.id, over.id)
-    );
-  }
+  // Find the array that item with itemId belongs to
+  function findParentArray(items, itemId) {
+    // Check top-level array first
+    if (items.some(i => i.id === itemId)) return items;
 
-  // Recursive helper
-  function moveItem(tree, activeId, overId) {
-    let itemToMove = null;
-
-    // Step 1: remove active item from the tree
-    const newTree = tree
-      .map(node => {
-        if (node.id === activeId) {
-          itemToMove = node;
-          return null; // remove
-        }
-        if (node.items?.length) {
-          node.items = moveItem(node.items, activeId, overId).tree;
-          if (!itemToMove) itemToMove = moveItem(node.items, activeId, overId).itemToMove;
-        }
-        return node;
-      })
-      .filter(Boolean);
-
-    if (!itemToMove) return newTree;
-
-    // Step 2: find where to insert
-    const insertIndex = newTree.findIndex(n => n.id === overId);
-
-    if (insertIndex !== -1) {
-      newTree.splice(insertIndex + 1, 0, itemToMove);
-    } else {
-      // insert recursively into children if not found at this level
-      for (const node of newTree) {
-        if (node.items?.length) {
-          node.items = moveItem(node.items, activeId, overId).tree;
-        }
+    // Then recurse into nested arrays
+    for (let item of items) {
+      if (item.items?.length) {
+        const result = findParentArray(item.items, itemId);
+        if (result) return result;
       }
     }
-
-    // Step 3: recalc positions for this level
-    newTree.forEach((n, i) => (n.position = i + 1));
-
-    return newTree;
+    return null;
   }
-  */
+
+  const updatePositions = (array) => {
+    const updatedPositions = array.map((item, index) => {
+
+      return { ...item, position: index + 1 };
+    });
+
+    return updatedPositions;
+  }
+
+  function replaceArrayInTree(tree, oldArray, newArray) {
+    // If the tree itself is the array to replace (top-level)
+    if (tree === oldArray) {
+
+      return updatePositions(newArray);
+    }
+
+    // Look for nested items
+    return tree.map(item => {
+
+      // Match
+      if (item.items === oldArray) {
+
+        return { ...item, items: updatePositions(newArray) };
+      }
+
+      // Keep looking
+      if (item.items?.length) {
+        return { ...item, items: replaceArrayInTree(item.items, oldArray, newArray) };
+      }
+      return item;
+    });
+  }
 
   const treeDepth = getMaxDepth(items);
 
