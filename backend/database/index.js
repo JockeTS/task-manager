@@ -2,9 +2,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import Database from "better-sqlite3";
 
-// For testing
-import fs from "fs/promises";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -23,16 +20,6 @@ database.prepare(`
         FOREIGN KEY (parent_id) REFERENCES items(id) ON DELETE CASCADE
     );    
 `).run();
-
-// Load test data
-export const readTestData = async () => {
-
-  const data = JSON.parse(
-    await fs.readFile(new URL("./dst2.json", import.meta.url))
-  );
-
-  return data;
-};
 
 // Update positions, insert new item
 export const insertItem = database.transaction((newItemTemp) => {
@@ -179,22 +166,15 @@ export const deleteItems = () => {
   };
 };
 
-/*
-// Re-index positions, starting from 1
-function normalizePositions() {
-  database.prepare(`
-    WITH ordered AS (
-      SELECT
-      id,
-      ROW_NUMBER() OVER (ORDER BY position ASC) AS new_position
-      FROM items
-    )
+// Update item positions in changed items array after drag and drop
+export const updateItemPositions = database.transaction((items) => {
+  const stmt = database.prepare(`
     UPDATE items
-    SET position = (
-      SELECT new_position
-      FROM ordered
-      WHERE ordered.id = items.id
-    );
-  `).run();
-}
-*/
+    SET position = ?
+    WHERE id = ?
+  `);
+
+  for (const item of items) {
+    stmt.run(item.position, item.id);
+  }
+});

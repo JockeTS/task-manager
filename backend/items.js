@@ -1,6 +1,6 @@
 import express from "express";
-import { insertItem, getItems, updateItem, deleteItem, deleteItems, readTestData, getItemsTree } from "./database/index.js";
-import { createItemSchema, updateItemSchema, paramsSchema } from "./validation/itemSchema.js";
+import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "./database/index.js";
+import { createItemSchema, paramsSchema, updateItemSchema } from "./validation/itemSchema.js";
 
 const router = express.Router();
 
@@ -107,6 +107,23 @@ router.delete("/", (req, res) => {
   } catch (error) {
     // Send error message to client
     res.status(500).json({ success: false, message: "Internal server error." });
+  }
+});
+
+// Update positions after drag & drop
+router.put("/positions", (req, res) => {
+  const { items } = req.body;
+
+  if (!Array.isArray(items)) {
+    return res.status(400).json({ error: "Invalid payload" });
+  }
+
+  try {
+    updateItemPositions(items);
+    res.sendStatus(204);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
 });
 

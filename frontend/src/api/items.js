@@ -106,3 +106,18 @@ export const deleteItems = async () => {
 
   return success;
 };
+
+// Update positions after drag & drop
+export const updatePositionsInDb = async (items) => {
+  return fetch("http://localhost:8000/items/positions", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      items: items.map(i => ({
+        id: i.id,
+        parent_id: i.parent_id,
+        position: i.position
+      }))
+    })
+  });
+};

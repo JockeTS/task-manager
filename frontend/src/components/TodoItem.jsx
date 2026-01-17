@@ -3,8 +3,7 @@ import { SortableTodoItem } from "./SortableTodoItem";
 
 import {
   SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
+  verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 
 const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete, dragHandleProps }) => {
