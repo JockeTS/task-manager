@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { SortableTodoItem } from "./SortableTodoItem";
 
+import { FiMenu, FiEdit2, FiPlus, FiTrash2, FiCornerDownRight } from "react-icons/fi";
+
 import {
   SortableContext,
   verticalListSortingStrategy
@@ -66,8 +68,9 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 {...dragHandleProps.attributes}
                 {...dragHandleProps.listeners}
                 onClick={(e) => e.stopPropagation()}
+                style={{ fontSize: `${fontSize}px` }}
               >
-                ⠿
+                <FiMenu />
               </button>
 
               <button
@@ -76,9 +79,9 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   event.stopPropagation();
                   setIsEditing(true);
                 }}
-
                 style={{ fontSize: `${fontSize}px` }}
-              > ✏️
+              > 
+                <FiEdit2 />
               </button>
 
               <button
@@ -87,9 +90,9 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   event.stopPropagation();
                   onAddSiblingItem(item);
                 }}
-
                 style={{ fontSize: `${fontSize}px` }}
-              > ↓ +
+              > 
+                <FiPlus />
               </button>
 
               <button
@@ -98,9 +101,9 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   event.stopPropagation();
                   onAddSubItem(item);
                 }}
-
                 style={{ fontSize: `${fontSize}px` }}
-              > ↳ +
+              >
+                <FiCornerDownRight />
               </button>
 
               <button
@@ -109,9 +112,9 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   event.stopPropagation();
                   onDelete(item);
                 }}
-
                 style={{ fontSize: `${fontSize}px` }}
-              > 🗑️
+              > 
+                <FiTrash2 />
               </button>
             </div>
           )}
