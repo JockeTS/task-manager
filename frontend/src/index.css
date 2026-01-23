@@ -91,47 +91,13 @@ main header {
   display: inline;
 }
 
-/*
-.action-button {
-  height: 1em;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 0.25em;
-  padding: 0;
-  line-height: 1;
-  border: none;
-  cursor: pointer;
-}
-*/
-
 .action-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin: 0 0.25em;
+  vertical-align: middle;
 }
-
-/*
-.action-button {
-  font-size: inherit;           
-  width: 1.8em;
-  height: 1.8em;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0;
-  line-height: 1;               
-
-  border: none;
-  background: transparent;
-  border-radius: 0.3em;
-
-  cursor: pointer;
-}
-*/
 
 .action-button svg {
   width: 0.9em;
