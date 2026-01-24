@@ -153,18 +153,39 @@ export const deleteItem = database.transaction((itemId) => {
 });
 
 // Delete all items, resetting the list
-export const deleteItems = () => {
+export const deleteItems = database.transaction(() => {
 
-  const result = database.prepare("DELETE FROM items").run();
+  // Delete existing items
+  database.prepare("DELETE FROM items").run();
 
-  if (result.changes === 0) {
-    throw new Error("Item not found or already deleted.");
+  const topLevelResult = database
+    .prepare(`
+      INSERT INTO items (name, position, parent_id)
+      VALUES (?, ?, ?)
+    `)
+    .run("Walk the dog", 1, null);
+
+  const topLevelId = topLevelResult.lastInsertRowid;
+
+  const subItems = [
+    { name: "Get off the couch", position: 1 },
+    { name: "Find the dog", position: 2 },
+    { name: "Go out", position: 3 }
+  ];
+
+  for (const sub of subItems) {
+    database
+      .prepare(`
+        INSERT INTO items (name, position, parent_id)
+        VALUES (?, ?, ?)
+      `)
+      .run(sub.name, sub.position, topLevelId);
   }
 
   return {
     "success": true
   };
-};
+});
 
 // Update item positions in changed items array after drag and drop
 export const updateItemPositions = database.transaction((items) => {

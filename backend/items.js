@@ -115,7 +115,7 @@ router.put("/positions", (req, res) => {
   const { items } = req.body;
 
   if (!Array.isArray(items)) {
-    return res.status(400).json({ error: "Invalid payload" });
+    return res.status(400).json({ error: "Invalid payload." });
   }
 
   try {

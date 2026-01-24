@@ -68,7 +68,8 @@ function App() {
 
     try {
       await deleteItems();
-      setItems([]);
+      const freshItems = await fetchItems();
+      setItems(freshItems);
     } catch (error) {
       console.error("Failed to reset list: ", error);
       alert("Could not reset list. Please try again.");
