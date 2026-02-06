@@ -43,6 +43,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
+          style={{ fontSize: `${fontSize}px` }}
         />
       ) : ( // Show text span if item is not being edited
         <span className={`${item.completed ? "completed" : "pending"}`}
