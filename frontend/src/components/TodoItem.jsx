@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { SortableTodoItem } from "./SortableTodoItem";
 
 import { FiMenu, FiEdit2, FiPlus, FiTrash2, FiCornerDownRight } from "react-icons/fi";
@@ -8,11 +8,16 @@ import {
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 
+import { Tooltip } from 'react-tooltip';
+
 const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete, dragHandleProps }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
   // const [completed, setCompleted] = useState(item.completed);
+
+  const [showTooltip, setShowTooltip] = useState(false);
+  const timeoutRef = useRef(null);
 
   const fontSize = 16 + (4 * (level - 1));
 
@@ -64,14 +69,18 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           {/* Show action buttons when item is hovered */}
           {isHovered && (
             <div className="button-container">
+
               <button
                 className="action-button"
                 {...dragHandleProps.attributes}
                 {...dragHandleProps.listeners}
                 onClick={(e) => e.stopPropagation()}
                 style={{ fontSize: `${fontSize}px`, color: "blue" }}
+                data-tooltip-id="tooltip-drag-and-drop"
+                data-tooltip-content="Drag and drop task"
               >
                 <FiMenu />
+                <Tooltip id="tooltip-drag-and-drop" delayShow={750}/>
               </button>
 
               <button
@@ -81,8 +90,11 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   setIsEditing(true);
                 }}
                 style={{ fontSize: `${fontSize}px`, color: "yellow" }}
-              > 
+                data-tooltip-id="tooltip-edit"
+                data-tooltip-content="Edit task"
+              >
                 <FiEdit2 />
+                <Tooltip id="tooltip-edit" delayShow={750}/>
               </button>
 
               <button
@@ -92,8 +104,11 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   onAddSiblingItem(item);
                 }}
                 style={{ fontSize: `${fontSize}px`, color: "green" }}
-              > 
+                data-tooltip-id="tooltip-add-sibling"
+                data-tooltip-content="Add sibling task"
+              >
                 <FiPlus />
+                <Tooltip id="tooltip-add-sibling" delayShow={750}/>
               </button>
 
               <button
@@ -103,8 +118,11 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   onAddSubItem(item);
                 }}
                 style={{ fontSize: `${fontSize}px` }}
+                data-tooltip-id="tooltip-add-child"
+                data-tooltip-content="Add child task"
               >
                 <FiCornerDownRight />
+                <Tooltip id="tooltip-add-child" delayShow={750}/>
               </button>
 
               <button
@@ -114,8 +132,11 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   onDelete(item);
                 }}
                 style={{ fontSize: `${fontSize}px` }}
-              > 
+                data-tooltip-id="tooltip-delete"
+                data-tooltip-content="Delete task"
+              >
                 <FiTrash2 />
+                <Tooltip id="tooltip-delete" delayShow={750}/>
               </button>
             </div>
           )}
