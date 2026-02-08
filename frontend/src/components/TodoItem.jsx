@@ -69,7 +69,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 {...dragHandleProps.attributes}
                 {...dragHandleProps.listeners}
                 onClick={(e) => e.stopPropagation()}
-                style={{ fontSize: `${fontSize}px` }}
+                style={{ fontSize: `${fontSize}px`, color: "blue" }}
               >
                 <FiMenu />
               </button>
@@ -80,7 +80,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   event.stopPropagation();
                   setIsEditing(true);
                 }}
-                style={{ fontSize: `${fontSize}px` }}
+                style={{ fontSize: `${fontSize}px`, color: "yellow" }}
               > 
                 <FiEdit2 />
               </button>
@@ -91,7 +91,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                   event.stopPropagation();
                   onAddSiblingItem(item);
                 }}
-                style={{ fontSize: `${fontSize}px` }}
+                style={{ fontSize: `${fontSize}px`, color: "green" }}
               > 
                 <FiPlus />
               </button>
