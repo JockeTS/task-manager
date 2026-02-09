@@ -1,41 +1,39 @@
-# Recursive Task Manager
+# Recurso - Hierarchical Task Manager
 
-A minimalist task management application inspired by text-based editors such as TextEdit and Notepad++, where tasks are represented as plain text and organized in a hierarchical tree structure.
+![Main view screenshot](docs/images/main-view.png) 
 
-## Concept
+<!-- 
+<p align="center">
+  <img src="./docs/images/main-view.png" width="400" />
+</p>
+-->
 
-The goal of this project is to explore a text-first approach to task management.
+Task management app focused on organizing tasks into parent-child relationships. This chain is technically endless and the different levels are visually separated using font size, with tasks on the lowest level having the smallest font size. From there the font size then increases incrementally for each level, so that top-level tasks always have the biggest font size.
 
-Each task is represented as a simple text item that can contain child tasks, allowing users to build arbitrary task hierarchies.
+## Functionality
+Clicking a task toggles its status between **completed** (strikethrough) and **pending**.
 
-Tasks can be freely moved between parent items, enabling flexible reorganization without rigid categories or predefined workflows.
+**+ Add New Item**: adds a new top-level task at the bottom of the list
 
-## Technical Approach
+**- Reset List**: deletes all tasks and adds a placeholder task
 
-Tasks are modeled as a tree structure, where each task may have zero or more child tasks.
+### Action Buttons
 
-All core operations — such as creating, deleting, moving, and updating tasks — are implemented using recursive algorithms to traverse and modify the task tree.
+![Action buttons screenshot](docs/images/action-buttons.png)
 
-This approach keeps the logic consistent and avoids special-casing for deeply nested structures.
+These appear on the right when hovering over a task and support the following functionality:
 
-## Architecture
+* **Drag and Drop**: move the current task, including any child tasks
 
-- Backend: Node.js with Express, exposing a REST API for managing task data
-- Frontend: React application for interacting with and visualizing the task hierarchy
-- Data model designed around hierarchical relationships rather than flat lists
+* **Edit**: edit the current task
 
-## Current Status
+* **Add Sibling Task**: add a new sibling task below the current task
 
-This project is currently under active development.
+* **Add Child Task**: add a new child task to the current task
 
-At this stage, the focus is on:
-- Core data modeling
-- Correct handling of recursive operations
-- API design and consistency
+* **Delete**: delete the current task, including any child tasks
 
-UI polish, persistence strategies, and deployment will be addressed in later iterations.
-
-## Setup / How to Run
+## How to Run
 
 ### Server
 ```

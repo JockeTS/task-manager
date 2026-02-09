@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { SortableTodoItem } from "./SortableTodoItem";
 
 import { FiMenu, FiEdit2, FiPlus, FiTrash2, FiCornerDownRight } from "react-icons/fi";
@@ -15,9 +15,6 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
   // const [completed, setCompleted] = useState(item.completed);
-
-  const [showTooltip, setShowTooltip] = useState(false);
-  const timeoutRef = useRef(null);
 
   const fontSize = 16 + (4 * (level - 1));
 
