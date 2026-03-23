@@ -1,49 +1,4 @@
-/*
-import path from "path";
-import { fileURLToPath } from "url";
-import Database from "better-sqlite3";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const databasePath = path.join(__dirname, "task-manager.db");
-export const database = new Database(databasePath);
-
-// initDb(true);
-initDb();
-
-function initDb(forceReset = false) {
-  database.pragma("foreign_keys = ON");
-
-  if (forceReset) {
-    database.prepare("DROP TABLE IF EXISTS items;").run();
-    database.prepare("DROP TABLE IF EXISTS users;").run();
-  }
-
-  database.prepare(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-`).run();
-
-  // Create items table if it doesn't exist
-  database.prepare(`
-    CREATE TABLE IF NOT EXISTS items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      parent_id INTEGER,
-      name TEXT NOT NULL,
-      completed BOOLEAN DEFAULT 0,
-      position INTEGER DEFAULT 0,
-
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-      FOREIGN KEY (parent_id) REFERENCES items(id) ON DELETE CASCADE
-    );    
-`).run();
-}
+import { database } from "./connection.js";
 
 // Update positions, insert new item
 export const insertItem = database.transaction((newItemTemp) => {
@@ -223,4 +178,3 @@ export const updateItemPositions = database.transaction((items) => {
     stmt.run(item.position, item.id);
   }
 });
-*/
