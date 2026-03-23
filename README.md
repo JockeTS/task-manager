@@ -6,6 +6,8 @@
 <p align="center">
   <img src="./docs/images/main-view.png" width="400" />
 </p>
+
+Recurso is a task management app focused on organizing tasks into hierarchical parent–child relationships. The task tree can be nested indefinitely, with each level visually distinguished by font size: deeper levels use smaller text, while top-level tasks always appear largest.
 -->
 
 Task management app focused on organizing tasks into parent-child relationships. This chain is technically endless and the different levels are visually separated using font size, with tasks on the lowest level having the smallest font size. From there the font size then increases incrementally for each level, so that top-level tasks always have the biggest font size.
@@ -32,6 +34,11 @@ These appear on the right when hovering over a task and support the following fu
 * **Add Child Task**: add a new child task to the current task
 
 * **Delete**: delete the current task, including any child tasks
+
+## Technical Overview
+
+### Backend
+- Uses the Node.js runtime to allow JavaScript to be executed server-side
 
 ## How to Run
 
