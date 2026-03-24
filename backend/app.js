@@ -2,7 +2,7 @@ import express from "express";
 import { initDb } from "./database/init.js";
 import { seedDatabase } from "./database/seed.js";
 import cors from "cors";
-import itemRoutes from "./items.js";
+import itemRoutes from "./routes/items.js";
 
 const app = express();
 

@@ -1,6 +1,6 @@
 import express from "express";
-import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "./database/items.js";
-import { createItemSchema, paramsSchema, updateItemSchema } from "./validation/itemSchema.js";
+import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "../database/items.js";
+import { createItemSchema, paramsSchema, updateItemSchema } from "../validation/itemSchema.js";
 
 const router = express.Router();
 
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
     // const items = getItems();
 
     // const items = await readTestData();
-    const items = getItemsTree();
+    const items = getItemsTree("1");
     
     // Send items to client
     res.status(200).json(items);

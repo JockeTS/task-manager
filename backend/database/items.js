@@ -45,15 +45,29 @@ export const getItems = () => {
   return items;
 };
 
-export const getItemsTree = () => {
+// Get all items ordered by position and name (if position doesn't exist) for one user
+export const getItemsForUser = (userId) => {
+  const items = database.prepare(`
+    SELECT *
+    FROM items
+    WHERE user_id = ?
+    ORDER BY position, name
+  `).all(userId);
+
+  return items;
+};
+
+// Get all items for a user in a tree structure
+export const getItemsTree = (userId) => {
   const rows = database.prepare(`
     SELECT *
     FROM items
+    WHERE user_id = ?
     ORDER BY 
         CASE WHEN parent_id IS NULL THEN 0 ELSE 1 END,
         parent_id ASC,
         position ASC
-  `).all();
+  `).all(userId);
 
   // Build tree from sorted items
   function buildTree(items, parentId = null) {
