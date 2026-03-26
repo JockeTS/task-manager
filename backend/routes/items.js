@@ -1,8 +1,11 @@
 import express from "express";
-import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "../database/items.js";
+// import { requireAuth } from "../middleware/auth.js";
 import { createItemSchema, paramsSchema, updateItemSchema } from "../validation/itemSchema.js";
+import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "../database/items.js";
 
 const router = express.Router();
+
+// router.use(requireAuth);
 
 // Create (POST) an item
 router.post("/", (req, res) => {
@@ -33,7 +36,7 @@ router.get("/", async (req, res) => {
     // const items = getItems();
 
     // const items = await readTestData();
-    const items = getItemsTree("1");
+    const items = getItemsTree(req.session.userId);
     
     // Send items to client
     res.status(200).json(items);

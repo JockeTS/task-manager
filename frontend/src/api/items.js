@@ -1,3 +1,5 @@
+import { apiFetch } from "./helper";
+
 // Create an item or throw an error if unsuccessful
 export const createItem = async (newItemData) => {
   const res = await fetch(`http://localhost:8000/items/`, {
@@ -23,6 +25,10 @@ export const createItem = async (newItemData) => {
 
 // Fetch all items or throw an error if unsuccessful
 export const fetchItems = async () => {
+
+  return apiFetch("/items"); // ASYNC?
+
+  /*
   const res = await fetch("http://localhost:8000/items", {
     method: "GET"
   });
@@ -40,6 +46,7 @@ export const fetchItems = async () => {
   }
 
   return items;
+  */
 };
 
 // Update an item or throw an error if unsuccessful

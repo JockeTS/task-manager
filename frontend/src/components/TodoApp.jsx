@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { createItem, deleteItem, deleteItems, fetchItems, updateItem, updatePositionsInDb } from "./api/items";
+import { createItem, deleteItem, deleteItems, fetchItems, updateItem, updatePositionsInDb } from "../api/items";
 
-import { deleteItemInTree, getMaxDepth, insertAdjacent, updateItemInTree } from "./utils/cudOps";
-import { findParentArray, replaceArrayInTree } from "./utils/dragDrop";
+import { deleteItemInTree, getMaxDepth, insertAdjacent, updateItemInTree } from "../utils/cudOps";
+import { findParentArray, replaceArrayInTree } from "../utils/dragDrop";
 
 import {
   closestCenter,
@@ -18,35 +18,9 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { SortableTodoItem } from "./components/SortableTodoItem";
+import { SortableTodoItem } from "./SortableTodoItem";
 
-import { apiFetch } from "./api/helper";
-import Login from "./components/Login";
-import TodoApp from "./components/TodoApp";
-
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
-
-  // Check if user is logged in
-  useEffect(() => {
-    async function checkAuth() {
-      const res = await apiFetch("/me");
-      setIsAuthenticated(res.ok);
-    }
-
-    checkAuth();
-  }, []);
-
-  if (isAuthenticated === null) return <div>Loading...</div>;
-
-  if (!isAuthenticated) {
-    // Set user as authenticated if login successful
-    return <Login onLogin={() => setIsAuthenticated(true)} />
-  }
-
-  return <TodoApp />;
-
-  /*
+function TodoApp() {
   const [items, setItems] = useState([]);
 
   const sensors = useSensors(
@@ -269,7 +243,6 @@ function App() {
       </footer>
     </main>
   );
-  */
 }
 
-export default App;
+export default TodoApp;
