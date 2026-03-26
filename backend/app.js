@@ -60,11 +60,17 @@ app.post("/logout", (req, res) => {
 
 // Send userId if user logged in
 app.get("/me", (req, res) => {
+  res.json({
+    userId: req.session.userId || null
+  });
+
+  /*
   if (!req.session.userId) {
     return res.status(400).json({ user: null });
   }
 
   res.json({ userId: req.session.userId });
+  */
 });
 
 app.use("/items", requireAuth, itemRoutes);

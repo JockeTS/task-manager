@@ -30,8 +30,18 @@ function App() {
   // Check if user is logged in
   useEffect(() => {
     async function checkAuth() {
+      /*
       const res = await apiFetch("/me");
       setIsAuthenticated(res.ok);
+      */
+
+      const data = await apiFetch("/me");
+
+      if (data.userId) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
     }
 
     checkAuth();
