@@ -4,7 +4,7 @@ import { initDb } from "./database/init.js";
 import { seedDatabase } from "./database/seed.js";
 import cors from "cors";
 import itemRoutes from "./routes/items.js";
-import { getUserByEmail } from "./database/users.js";
+import { getUserByEmail, getUserById } from "./database/users.js";
 import { requireAuth } from "./middleware/auth.js";
 
 const app = express();
@@ -40,6 +40,7 @@ app.use(
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
+  // Get user from db
   const user = getUserByEmail(email);
 
   if (!user || user.password_hash !== password) {
@@ -58,10 +59,21 @@ app.post("/logout", (req, res) => {
   })
 });
 
-// Send userId if user logged in
+// Get user object from user id in session
 app.get("/me", (req, res) => {
+  if (!req.session.userId) {
+    res.json({ user: null });
+
+    return; 
+  }
+
+  const user = getUserById(req.session.userId);
+
   res.json({
-    userId: req.session.userId || null
+    user: {
+      id: user.id,
+      email: user.email
+    }
   });
 
   /*
