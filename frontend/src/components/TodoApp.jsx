@@ -20,7 +20,7 @@ import {
 
 import { SortableTodoItem } from "./SortableTodoItem";
 
-function TodoApp() {
+function TodoApp({ user, onLogout }) {
   const [items, setItems] = useState([]);
 
   const sensors = useSensors(
@@ -210,6 +210,9 @@ function TodoApp() {
     <main className="content">
       <header>
         <h1 id="title">Recurso - Task Manager</h1>
+
+        <p>Logged in as: {user.email}</p>
+        <button onClick={onLogout}>Logout</button>
 
         <button id="new-item-btn" className="full-width-button" onClick={handleAddTopItem}>
           + Add New Item

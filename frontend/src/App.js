@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 
@@ -8,8 +8,7 @@ import TodoApp from "./components/TodoApp";
 
 function App() {
   const [user, setUser] = useState(undefined);
-
-  console.log(user);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function checkAuth() {
@@ -21,6 +20,12 @@ function App() {
 
     checkAuth();
   }, []);
+
+  const handleLogout = async () => {
+    await apiFetch("/logout", { method: "POST" });
+    setUser(null);
+    navigate("/login");
+  };
 
   if (user === undefined) return <div>Loading...</div>
 
@@ -37,7 +42,7 @@ function App() {
         path="/"
         element={
           // Navigate to login page if no user
-          user ? <TodoApp /> : <Navigate to="/login" />
+          user ? <TodoApp user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
         }
       />
     </Routes>
