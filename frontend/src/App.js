@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { apiFetch } from "./api/helper";
+import Register from "./components/Register";
 import Login from "./components/Login";
 import TodoApp from "./components/TodoApp";
 
@@ -21,6 +22,12 @@ function App() {
     checkAuth();
   }, []);
 
+  /*
+  const handleRegister = async () => {
+    navigate("/login")
+  };
+  */
+
   const handleLogout = async () => {
     await apiFetch("/logout", { method: "POST" });
     setUser(null);
@@ -31,6 +38,13 @@ function App() {
 
   return (
     <Routes>
+      <Route 
+        path="/register"
+        element={
+          user ? <Navigate to="/" /> : <Register onRegister={setUser} />
+        }
+      />
+
       <Route
         path="/login"
         element={

@@ -4,7 +4,7 @@ import { initDb } from "./database/init.js";
 import { seedDatabase } from "./database/seed.js";
 import cors from "cors";
 import itemRoutes from "./routes/items.js";
-import { getUserByEmail, getUserById } from "./database/users.js";
+import { insertUser, getUserByEmail, getUserById } from "./database/users.js";
 import { requireAuth } from "./middleware/auth.js";
 
 const app = express();
@@ -35,6 +35,20 @@ app.use(
     }
   })
 )
+
+app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+
+  const userId = insertUser(email, password);
+
+  if (!userId) {
+    return res.status(401).json({ error: "Registration failed" });  
+  };
+
+  req.session.userId = userId;
+
+  res.json({ message: "Registered and Logged in" });
+});
 
 // Login - add user id to session
 app.post("/login", (req, res) => {

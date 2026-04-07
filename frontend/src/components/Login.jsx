@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/helper";
+import { Link } from "react-router-dom";
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ export default function Login({ onLogin }) {
       // No catch: login succeeded
       const data = await apiFetch("/me");
       onLogin(data.user);
-      
+
       navigate("/");
     } catch (error) {
       alert("Login failed");
@@ -27,11 +28,17 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
-      <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-      <button type="submit">OK</button>
-    </form>
+    <>
+      <h1>Login</h1>
+
+      <form onSubmit={handleSubmit}>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
+        <button type="submit">OK</button>
+      </form>
+
+      <p>No account? Sign up <Link to="/register">here</Link>.</p>
+    </>
   );
 }
 
