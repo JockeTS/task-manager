@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/helper";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState("");
@@ -28,17 +29,17 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <>
-      <h1>Login</h1>
+    <main className="content">
+      <h1 className="text-4xl">Login</h1>
 
       <form onSubmit={handleSubmit}>
         <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
         <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-        <button type="submit">OK</button>
+        <Button type="submit">OK</Button>
       </form>
 
       <p>No account? Sign up <Link to="/register">here</Link>.</p>
-    </>
+    </main>
   );
 }
 
