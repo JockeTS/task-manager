@@ -1,8 +1,8 @@
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-const AuthForm = ({ handleSubmit, email, setEmail, password, setPassword }) => {
+const AuthForm = ({ handleSubmit, email, setEmail, password, setPassword, buttonText }) => {
   return (
     <form onSubmit={handleSubmit} className="grid gap-6 max-w-md w-full mx-auto rounded-lg p-6 shadow-sm">
       <div className="grid gap-2">
@@ -15,7 +15,7 @@ const AuthForm = ({ handleSubmit, email, setEmail, password, setPassword }) => {
         <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="********" />
       </div>
 
-      <Button type="submit" className="w-full transition-colors hover:bg-primary/90">Submit</Button>
+      <Button type="submit" className="w-full">{buttonText}</Button>
     </form>
   );
 };

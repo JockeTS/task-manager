@@ -20,6 +20,10 @@ import {
 
 import { SortableTodoItem } from "./SortableTodoItem";
 
+import PageLayout from "./PageLayout";
+
+import { Button } from "./ui/button";
+
 function TodoApp({ user, onLogout }) {
   const [items, setItems] = useState([]);
 
@@ -207,6 +211,64 @@ function TodoApp({ user, onLogout }) {
   const treeDepth = getMaxDepth(items);
 
   return (
+    <PageLayout>
+      <div className="flex w-full justify-start hover:bg-red-200">
+        <p>Logged in as: {user.email}</p>
+
+        <Button onClick={onLogout}>
+          Logout
+        </Button>
+      </div>
+
+      <div className="flex w-full items-center justify-between">
+        <p>Logged in as: {user.email}</p>
+        <Button onClick={onLogout} className="border border-blue-500">Logout</Button>
+      </div>
+
+      <Button id="new-item-btn" onClick={handleAddTopItem}>
+        + Add New Item
+      </Button>
+
+      {/**
+      <button onClick={onLogout}>Logout</button>
+
+      <button id="new-item-btn" className="full-width-button" onClick={handleAddTopItem}>
+        + Add New Item
+      </button>
+      */}
+
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+          <div className="list-container hover:bg-red-200">
+            <ul className="todo-list">
+              {items.map(item => (
+                <SortableTodoItem
+                  key={item.id}
+                  level={treeDepth}
+                  item={item}
+                  onSave={handleItemSave}
+                  onAddSiblingItem={handleAddSiblingItem}
+                  onAddSubItem={handleAddSubItem}
+                  onDelete={handleItemDelete}
+                />
+              ))}
+            </ul>
+          </div>
+        </SortableContext>
+      </DndContext>
+
+      <Button id="reset-btn" onClick={handleResetList}>
+        - Reset List
+      </Button>
+
+      {/**
+      <button id="reset-btn" className="block w-full text-base p-4 text-center cursor-pointer" onClick={handleResetList}>
+        - Reset List
+      </button>
+       */}
+    </PageLayout>
+
+    /*
     <main className="content">
       <header>
         <h1 id="title">Recurso - Task Manager</h1>
@@ -245,6 +307,7 @@ function TodoApp({ user, onLogout }) {
         </button>
       </footer>
     </main>
+    */
   );
 }
 
