@@ -212,7 +212,8 @@ function TodoApp({ user, onLogout }) {
 
   return (
     <PageLayout>
-      <div className="flex w-full justify-start hover:bg-red-200">
+      
+      <div className="">
         <p>Logged in as: {user.email}</p>
 
         <Button onClick={onLogout}>
@@ -220,10 +221,12 @@ function TodoApp({ user, onLogout }) {
         </Button>
       </div>
 
+      {/**
       <div className="flex w-full items-center justify-between">
         <p>Logged in as: {user.email}</p>
         <Button onClick={onLogout} className="border border-blue-500">Logout</Button>
       </div>
+      */}
 
       <Button id="new-item-btn" onClick={handleAddTopItem}>
         + Add New Item

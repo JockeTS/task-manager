@@ -5,11 +5,22 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.test {
+  background-color: blue;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 /* 
+.test > * {
+  flex: 1;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities; 
-*/
 
 /*
 body {
