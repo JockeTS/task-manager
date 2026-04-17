@@ -213,8 +213,8 @@ function TodoApp({ user, onLogout }) {
   return (
     <PageLayout>
       
-      <div className="">
-        <p>Logged in as: {user.email}</p>
+      <div className="flex justify-end">
+        <p className="flex-2">Logged in as: {user.email}</p>
 
         <Button onClick={onLogout}>
           Logout
@@ -228,9 +228,7 @@ function TodoApp({ user, onLogout }) {
       </div>
       */}
 
-      <Button id="new-item-btn" onClick={handleAddTopItem}>
-        + Add New Item
-      </Button>
+      
 
       {/**
       <button onClick={onLogout}>Logout</button>
@@ -240,29 +238,35 @@ function TodoApp({ user, onLogout }) {
       </button>
       */}
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-          <div className="list-container hover:bg-red-200">
-            <ul className="todo-list">
-              {items.map(item => (
-                <SortableTodoItem
-                  key={item.id}
-                  level={treeDepth}
-                  item={item}
-                  onSave={handleItemSave}
-                  onAddSiblingItem={handleAddSiblingItem}
-                  onAddSubItem={handleAddSubItem}
-                  onDelete={handleItemDelete}
-                />
-              ))}
-            </ul>
-          </div>
-        </SortableContext>
-      </DndContext>
+      <div>
+        <Button id="new-item-btn" onClick={handleAddTopItem}>
+          + Add New Item
+        </Button>
 
-      <Button id="reset-btn" onClick={handleResetList}>
-        - Reset List
-      </Button>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+            <div className="shadow-sm border">
+              <ul className="todo-list">
+                {items.map(item => (
+                  <SortableTodoItem
+                    key={item.id}
+                    level={treeDepth}
+                    item={item}
+                    onSave={handleItemSave}
+                    onAddSiblingItem={handleAddSiblingItem}
+                    onAddSubItem={handleAddSubItem}
+                    onDelete={handleItemDelete}
+                  />
+                ))}
+              </ul>
+            </div>
+          </SortableContext>
+        </DndContext>
+
+        <Button id="reset-btn" onClick={handleResetList}>
+          - Reset List
+        </Button>
+      </div>
 
       {/**
       <button id="reset-btn" className="block w-full text-base p-4 text-center cursor-pointer" onClick={handleResetList}>

@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
 
       <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} buttonText="Log in"/>
 
-      <p className="text-center text-sm text-muted-foreground">No account? Sign up <Link to="/register" className="text-blue-600 underline">here</Link>.</p>
+      <p className="text-center text-sm text-muted-foreground">No account? Sign up <Link to="/register" className="text-blue-600 underline hover:text-blue-900">here</Link>.</p>
     </PageLayout>
   );
 }

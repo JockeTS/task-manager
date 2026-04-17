@@ -36,7 +36,7 @@ const Register = ({ onRegister }) => {
 
       <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} buttonText="Create account"/>
 
-      <p className="text-center text-sm text-muted-foreground">Already have an account? Log in <Link to="/login" className="text-blue-600 underline">here</Link>.</p>
+      <p className="text-center text-sm text-muted-foreground">Already have an account? Log in <Link to="/login" className="text-blue-600 underline hover:text-blue-900">here</Link>.</p>
     </PageLayout>
 
     /*
