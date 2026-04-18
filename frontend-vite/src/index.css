@@ -234,6 +234,8 @@ main header {
   --destructive: oklch(0.6 0.2 25);
   --destructive-foreground: oklch(1 0 0);
 
+  --task-hover: oklch(0.97 0.02 250);
+
   /*
     --background: oklch(1 0 0);
 

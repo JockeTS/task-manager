@@ -29,7 +29,7 @@ const Register = ({ onRegister }) => {
   }
 
   return (
-    <PageLayout >
+    <>
       <h2 className="text-3xl font-semibold text-center">
         Create account
       </h2>
@@ -37,23 +37,7 @@ const Register = ({ onRegister }) => {
       <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} buttonText="Create account"/>
 
       <p className="text-center text-sm text-muted-foreground">Already have an account? Log in <Link to="/login" className="text-blue-600 underline hover:text-blue-900">here</Link>.</p>
-    </PageLayout>
-
-    /*
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1">
-        <h1>Register</h1>
-
-        <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword}/>
-
-        <p className="text-center text-sm text-muted-foreground">Already have an account? Log in <Link to="/login" className="text-blue-600 underline">here</Link>.</p>
-      </main>
-
-      <Footer />
-    </div>
-    */
+    </>
   );
 }
 

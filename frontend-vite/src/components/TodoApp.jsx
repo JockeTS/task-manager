@@ -20,11 +20,9 @@ import {
 
 import { SortableTodoItem } from "./SortableTodoItem";
 
-import PageLayout from "./PageLayout";
-
 import { Button } from "./ui/button";
 
-function TodoApp({ user, onLogout }) {
+function TodoApp() {
   const [items, setItems] = useState([]);
 
   const sensors = useSensors(
@@ -211,8 +209,9 @@ function TodoApp({ user, onLogout }) {
   const treeDepth = getMaxDepth(items);
 
   return (
-    <PageLayout>
+    <>
       
+      {/**
       <div className="flex justify-end">
         <p className="flex-2">Logged in as: <strong>{user.email}</strong></p>
 
@@ -221,7 +220,6 @@ function TodoApp({ user, onLogout }) {
         </Button>
       </div>
 
-      {/**
       <div className="flex w-full items-center justify-between">
         <p>Logged in as: {user.email}</p>
         <Button onClick={onLogout} className="border border-blue-500">Logout</Button>
@@ -239,7 +237,7 @@ function TodoApp({ user, onLogout }) {
       */}
 
       <div>
-        <Button id="new-item-btn" onClick={handleAddTopItem}>
+        <Button id="new-item-btn" onClick={handleAddTopItem} variant="center" className="bg-green-600 hover:bg-green-800">
           + Add New Item
         </Button>
 
@@ -263,7 +261,7 @@ function TodoApp({ user, onLogout }) {
           </SortableContext>
         </DndContext>
 
-        <Button id="reset-btn" onClick={handleResetList}>
+        <Button id="reset-btn" onClick={handleResetList} variant="center" className="bg-yellow-600 hover:bg-yellow-800">
           - Reset List
         </Button>
       </div>
@@ -273,7 +271,7 @@ function TodoApp({ user, onLogout }) {
         - Reset List
       </button>
        */}
-    </PageLayout>
+    </>
 
     /*
     <main className="content">

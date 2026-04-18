@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/helper";
-import PageLayout from "./PageLayout";
 import AuthForm from "./AuthForm";
 
 const Login = ({ onLogin }) => {
@@ -29,15 +28,15 @@ const Login = ({ onLogin }) => {
   }
 
   return (
-    <PageLayout >
+    <>
       <h2 className="text-3xl font-semibold text-center">
         Log in
       </h2>
 
-      <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} buttonText="Log in"/>
+      <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} buttonText="Log in" />
 
       <p className="text-center text-sm text-muted-foreground">No account? Sign up <Link to="/register" className="text-blue-600 underline hover:text-blue-900">here</Link>.</p>
-    </PageLayout>
+    </>
   );
 }
 

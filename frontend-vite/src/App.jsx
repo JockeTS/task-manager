@@ -6,6 +6,7 @@ import { apiFetch } from "./api/helper";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import TodoApp from "./components/TodoApp";
+import PageLayout from "./components/PageLayout";
 
 function App() {
   const [user, setUser] = useState(undefined);
@@ -41,14 +42,14 @@ function App() {
       <Route 
         path="/register"
         element={
-          user ? <Navigate to="/" /> : <Register onRegister={setUser} />
+          user ? <Navigate to="/" /> : <PageLayout><Register onRegister={setUser} /></PageLayout>
         }
       />
 
       <Route
         path="/login"
         element={
-          user ? <Navigate to="/" /> : <Login onLogin={setUser} />
+          user ? <Navigate to="/" /> : <PageLayout><Login onLogin={setUser} /></PageLayout>
         }
       />
 
@@ -56,7 +57,7 @@ function App() {
         path="/"
         element={
           // Navigate to login page if no user
-          user ? <TodoApp user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
+          user ? <PageLayout user={user} onLogout={() => handleLogout()}><TodoApp /></PageLayout> : <Navigate to="/login" />
         }
       />
     </Routes>
