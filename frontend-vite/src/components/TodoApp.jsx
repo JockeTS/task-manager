@@ -214,7 +214,7 @@ function TodoApp({ user, onLogout }) {
     <PageLayout>
       
       <div className="flex justify-end">
-        <p className="flex-2">Logged in as: {user.email}</p>
+        <p className="flex-2">Logged in as: <strong>{user.email}</strong></p>
 
         <Button onClick={onLogout}>
           Logout
@@ -245,8 +245,8 @@ function TodoApp({ user, onLogout }) {
 
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-            <div className="shadow-sm border">
-              <ul className="todo-list">
+            <div className="my-4 shadow-sm">
+              <ul className="p-4">
                 {items.map(item => (
                   <SortableTodoItem
                     key={item.id}
