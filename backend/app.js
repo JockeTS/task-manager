@@ -90,14 +90,6 @@ app.get("/me", (req, res) => {
       email: user.email
     }
   });
-
-  /*
-  if (!req.session.userId) {
-    return res.status(400).json({ user: null });
-  }
-
-  res.json({ userId: req.session.userId });
-  */
 });
 
 app.use("/items", requireAuth, itemRoutes);

@@ -9,6 +9,8 @@ const router = express.Router();
 
 // Create (POST) an item
 router.post("/", (req, res) => {
+  const userId = req.session.userId;
+
   // Parse contents of req.body to ensure they conform to item schema
   const parsedBody = createItemSchema.safeParse(req.body);
 
@@ -17,7 +19,7 @@ router.post("/", (req, res) => {
   }
 
   try {
-    const newItem = insertItem(req.session.userId, parsedBody.data);
+    const newItem = insertItem(userId, parsedBody.data);
     
     if (!newItem) {
       throw new Error("Insert returned no item.");
@@ -32,11 +34,13 @@ router.post("/", (req, res) => {
 
 // Read (GET) all items, ordered by position
 router.get("/", async (req, res) => {
+  const userId = req.session.userId;
+
   try {
     // const items = getItems();
 
     // const items = await readTestData();
-    const items = getItemsTree(req.session.userId);
+    const items = getItemsTree(userId);
     
     // Send items to client
     res.status(200).json(items);
@@ -47,6 +51,8 @@ router.get("/", async (req, res) => {
 
 // Update (PATCH) an item
 router.patch("/:id", (req, res) => {
+  const userId = req.session.userId;
+
   // Validate params
   const parsedParams = paramsSchema.safeParse(req.params);
 
@@ -62,7 +68,7 @@ router.patch("/:id", (req, res) => {
   }
 
   try {
-    const itemToUpdate = updateItem(parsedParams.data.id, parsedBody.data);
+    const itemToUpdate = updateItem(parsedParams.data.id, parsedBody.data, userId);
 
     // If item to update was not found
     if (!itemToUpdate) {
@@ -78,6 +84,8 @@ router.patch("/:id", (req, res) => {
 
 // Delete (DELETE) an item
 router.delete("/:id", (req, res) => {
+  const userId = req.session.userId;
+
   const parsedParams = paramsSchema.safeParse(req.params);
 
   if (!parsedParams.success) {
@@ -85,7 +93,7 @@ router.delete("/:id", (req, res) => {
   }
 
   try {
-    const data = deleteItem(parsedParams.data.id);
+    const data = deleteItem(parsedParams.data.id, userId);
 
     if (!data) {
       return res.status(404).json({ success: false, message: "Item not found." });
@@ -101,9 +109,10 @@ router.delete("/:id", (req, res) => {
 
 // Delete (DELETE) all items
 router.delete("/", (req, res) => {
+  const userId = req.session.userId;
 
   try {
-    const data = deleteItems();
+    const data = deleteItems(userId);
 
     // Send data to client
     res.status(200).json(data);
@@ -115,6 +124,7 @@ router.delete("/", (req, res) => {
 
 // Update positions after drag & drop
 router.put("/positions", (req, res) => {
+  const userId = req.session.userId;
   const { items } = req.body;
 
   if (!Array.isArray(items)) {
@@ -122,7 +132,7 @@ router.put("/positions", (req, res) => {
   }
 
   try {
-    updateItemPositions(items);
+    updateItemPositions(items, userId);
     res.sendStatus(204);
   } catch (err) {
     console.error(err);

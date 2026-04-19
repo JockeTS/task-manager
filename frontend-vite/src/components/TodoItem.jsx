@@ -48,7 +48,10 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           style={{ fontSize: `${fontSize}px` }}
         />
       ) : ( // Show text span if item is not being edited
-        <span className={`${item.completed ? "completed" : "pending"} hover:bg-(--task-hover) px-2 pt-1 pb-2`}
+        <span 
+          className={`hover:bg-(--task-hover) px-2 pt-1 pb-2
+            ${item.completed ? "line-through text-muted-foreground" : ""}
+          `}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
           onMouseEnter={(e) => {
@@ -166,42 +169,6 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           </ul>
         </SortableContext>
       )}
-
-      {/*
-      {item.items && item.items.length > 0 && (
-        <ul className="todo-list">
-          {item.items.map(child => (
-            <SortableTodoItem
-              key={child.id}
-              id={child.id}          // dnd-kit needs this
-              level={level - 1}
-              item={child}
-              onSave={onSave}
-              onAddSiblingItem={onAddSiblingItem}
-              onAddSubItem={onAddSubItem}
-              onDelete={onDelete}
-            />
-          ))}
-        </ul>
-      )}
-
-      {item.items && item.items.length > 0 && (
-        <ul className="todo-list">
-          {item.items.map(child => (
-            <TodoItem
-              key={child.id}
-              level={level - 1}
-              item={child}
-              onSave={onSave}
-              onAddSiblingItem={onAddSiblingItem}
-              onAddSubItem={onAddSubItem}
-              onDelete={onDelete}
-            />
-          ))}
-        </ul>
-      )}
-      */}
-
     </div>
   );
 }

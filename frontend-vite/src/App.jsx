@@ -23,12 +23,6 @@ function App() {
     checkAuth();
   }, []);
 
-  /*
-  const handleRegister = async () => {
-    navigate("/login")
-  };
-  */
-
   const handleLogout = async () => {
     await apiFetch("/logout", { method: "POST" });
     setUser(null);
@@ -39,7 +33,7 @@ function App() {
 
   return (
     <Routes>
-      <Route 
+      <Route
         path="/register"
         element={
           user ? <Navigate to="/" /> : <PageLayout><Register onRegister={setUser} /></PageLayout>
@@ -53,7 +47,7 @@ function App() {
         }
       />
 
-      <Route 
+      <Route
         path="/"
         element={
           // Navigate to login page if no user
@@ -61,53 +55,7 @@ function App() {
         }
       />
     </Routes>
-
-    /*
-    <Routes>
-      <Route path="/login" element={<Login onLogin={setUser} />} />
-
-      <Route 
-        path="/"
-        element={
-          // Navigate to login page if no user
-          user ? <TodoApp /> : <Navigate to="/login" />
-        }
-      />
-    </Routes>
-    */
   );
-
-  /*
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
-
-  // Check if user is logged in
-  useEffect(() => {
-    async function checkAuth() {
-
-      // const res = await apiFetch("/me");
-      // setIsAuthenticated(res.ok);
-
-      const data = await apiFetch("/me");
-
-      if (data.userId) {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
-    }
-
-    checkAuth();
-  }, []);
-
-  if (isAuthenticated === null) return <div>Loading...</div>;
-
-  if (!isAuthenticated) {
-    // Set user as authenticated if login successful
-    return <Login onLogin={() => setIsAuthenticated(true)} />
-  }
-
-  return <TodoApp />;
-  */
 }
 
 export default App;

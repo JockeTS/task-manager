@@ -36,31 +36,6 @@ export const insertItem = database.transaction((userId, newItemTemp) => {
   return newItem;
 });
 
-/*
-// Get all items ordered by position and name (if position doesn't exist)
-export const getItems = () => {
-  const items = database.prepare(`
-    SELECT *
-    FROM items
-    ORDER BY position, name
-  `).all();
-
-  return items;
-};
-
-// Get all items ordered by position and name (if position doesn't exist) for one user
-export const getItemsForUser = (userId) => {
-  const items = database.prepare(`
-    SELECT *
-    FROM items
-    WHERE user_id = ?
-    ORDER BY position, name
-  `).all(userId);
-
-  return items;
-};
-*/
-
 // Get all items for a user in a tree structure
 export const getItemsTree = (userId) => {
   const rows = database.prepare(`
@@ -91,7 +66,7 @@ export const getItemsTree = (userId) => {
 };
 
 // Update fields of a single item
-export const updateItem = database.transaction((itemId, fieldsToUpdate) => {
+export const updateItem = database.transaction((itemId, fieldsToUpdate, userId) => {
   // Create a query-friendly string with the fields to be updated
   const fieldsString = Object.keys(fieldsToUpdate).map(key => `${key} = ?`).join(", ");
 
@@ -102,25 +77,27 @@ export const updateItem = database.transaction((itemId, fieldsToUpdate) => {
   database.prepare(`
     UPDATE items SET ${fieldsString}
     WHERE id = ?
-    `).run(values, itemId);
+    AND user_id = ?
+    `).run(values, itemId, userId);
 
   // Procure and return the updated item
   const updatedItem = database.prepare(`
     SELECT *
     FROM items
-    WHERE id = ?  
-  `).get(itemId);
+    WHERE id = ?
+    AND user_id = ?
+  `).get(itemId, userId);
 
   return updatedItem;
 });
 
 // Delete an item, update positions
-export const deleteItem = database.transaction((itemId) => {
+export const deleteItem = database.transaction((itemId, userId) => {
   // Get the item to delete
-  const itemToDelete = database.prepare("SELECT * FROM items WHERE id = ?").get(itemId);
+  const itemToDelete = database.prepare("SELECT * FROM items WHERE id = ? AND user_id = ?").get(itemId, userId);
 
   // Delete the item
-  const result = database.prepare("DELETE FROM items WHERE id = ?").run(itemId);
+  const result = database.prepare("DELETE FROM items WHERE id = ? AND user_id = ?").run(itemId, userId);
 
   if (result.changes === 0) {
     throw new Error("Item not found or already deleted.");
@@ -132,15 +109,17 @@ export const deleteItem = database.transaction((itemId) => {
       UPDATE items
       SET position = position - 1
       WHERE position > ?
-      AND parent_id IS NULL  
-    `).run(itemToDelete.position);
+      AND parent_id IS NULL
+      AND user_id = ?
+    `).run(itemToDelete.position, userId);
   } else {
     database.prepare(`
       UPDATE items
       SET position = position - 1
       WHERE position > ?
       AND parent_id = ?
-    `).run(itemToDelete.position, itemToDelete.parent_id);
+      AND user_id = ?
+    `).run(itemToDelete.position, itemToDelete.parent_id, userId);
   }
 
   return {
@@ -150,17 +129,17 @@ export const deleteItem = database.transaction((itemId) => {
 });
 
 // Delete all items, resetting the list
-export const deleteItems = database.transaction(() => {
+export const deleteItems = database.transaction((userId) => {
 
   // Delete existing items
-  database.prepare("DELETE FROM items").run();
+  database.prepare("DELETE FROM items WHERE user_id = ?").run(userId);
 
   const topLevelResult = database
     .prepare(`
-      INSERT INTO items (name, position, parent_id)
-      VALUES (?, ?, ?)
+      INSERT INTO items (name, position, parent_id, user_id)
+      VALUES (?, ?, ?, ?)
     `)
-    .run("Walk the dog", 1, null);
+    .run("Walk the dog", 1, null, userId);
 
   const topLevelId = topLevelResult.lastInsertRowid;
 
@@ -173,10 +152,10 @@ export const deleteItems = database.transaction(() => {
   for (const sub of subItems) {
     database
       .prepare(`
-        INSERT INTO items (name, position, parent_id)
-        VALUES (?, ?, ?)
+        INSERT INTO items (name, position, parent_id, user_id)
+        VALUES (?, ?, ?, ?)
       `)
-      .run(sub.name, sub.position, topLevelId);
+      .run(sub.name, sub.position, topLevelId, userId);
   }
 
   return {
@@ -185,14 +164,15 @@ export const deleteItems = database.transaction(() => {
 });
 
 // Update item positions in changed items array after drag and drop
-export const updateItemPositions = database.transaction((items) => {
+export const updateItemPositions = database.transaction((items, userId) => {
   const stmt = database.prepare(`
     UPDATE items
     SET position = ?
     WHERE id = ?
+    AND user_id = ?
   `);
 
   for (const item of items) {
-    stmt.run(item.position, item.id);
+    stmt.run(item.position, item.id, userId);
   }
 });
