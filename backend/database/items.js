@@ -1,7 +1,7 @@
 import { database } from "./connection.js";
 
 // Update positions, insert new item
-export const insertItem = database.transaction((newItemTemp) => {
+export const insertItem = database.transaction((userId, newItemTemp) => {
 
   // Update positions
   if (newItemTemp.parent_id === null) {
@@ -9,31 +9,34 @@ export const insertItem = database.transaction((newItemTemp) => {
       UPDATE items
       SET position = position + 1
       WHERE position >= ?
-      AND parent_id IS NULL  
-    `).run(newItemTemp.position);
+      AND parent_id IS NULL 
+      AND user_id = ?
+    `).run(newItemTemp.position, userId);
   } else {
     database.prepare(`
       UPDATE items
       SET position = position + 1
       WHERE position >= ?
       AND parent_id = ?
-    `).run(newItemTemp.position, newItemTemp.parent_id);
+      AND user_id = ?
+    `).run(newItemTemp.position, newItemTemp.parent_id, userId);
   }
 
   // Insert the new item
   const result = database.prepare(`
-    INSERT INTO items (name, position, parent_id)
-    VALUES (?, ?, ?)
-  `).run(newItemTemp.name, newItemTemp.position, newItemTemp.parent_id);
+    INSERT INTO items (name, position, parent_id, user_id)
+    VALUES (?, ?, ?, ?)
+  `).run(newItemTemp.name, newItemTemp.position, newItemTemp.parent_id, userId);
 
   // Get the new item
   const newItem = database.prepare(`
-    SELECT * FROM items WHERE id = ?
-  `).get(result.lastInsertRowid);
+    SELECT * FROM items WHERE id = ? AND user_id = ?
+  `).get(result.lastInsertRowid, userId);
 
   return newItem;
 });
 
+/*
 // Get all items ordered by position and name (if position doesn't exist)
 export const getItems = () => {
   const items = database.prepare(`
@@ -56,6 +59,7 @@ export const getItemsForUser = (userId) => {
 
   return items;
 };
+*/
 
 // Get all items for a user in a tree structure
 export const getItemsTree = (userId) => {

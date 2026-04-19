@@ -17,7 +17,7 @@ router.post("/", (req, res) => {
   }
 
   try {
-    const newItem = insertItem(parsedBody.data);
+    const newItem = insertItem(req.session.userId, parsedBody.data);
     
     if (!newItem) {
       throw new Error("Insert returned no item.");

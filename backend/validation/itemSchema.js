@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const itemSchema = z.object({
   id: z.coerce.number(),
+  user_id: z.coerce.number(),
   parent_id: z.coerce.number().nullable(),
   name: z.string().min(1).trim(),
   position: z.coerce.number(),
@@ -10,7 +11,7 @@ const itemSchema = z.object({
 
 // id is not allowed in the body, and all other fields are required (except when optional) when creating an item
 export const createItemSchema = itemSchema
-  .omit({ id: true });
+  .omit({ id: true, user_id: true });
 
 // id is part of params, all other fields are optional in the body when updating an item
 export const updateItemSchema = itemSchema
