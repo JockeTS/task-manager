@@ -2,6 +2,12 @@ import { apiFetch } from "./helper";
 
 // Create an item or throw an error if unsuccessful
 export const createItem = async (newItemData) => {
+  return await apiFetch("/items", {
+    method: "POST",
+    body: JSON.stringify({ name: newItemData.name, position: newItemData.position, parent_id: newItemData.parent_id })
+  });
+  // console.log(data);
+  /*
   const res = await fetch(`http://localhost:8000/items/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -21,6 +27,7 @@ export const createItem = async (newItemData) => {
   }
 
   return newItem;
+  */
 };
 
 // Fetch all items or throw an error if unsuccessful
