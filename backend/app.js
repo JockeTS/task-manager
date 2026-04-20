@@ -8,6 +8,7 @@ import cors from "cors";
 import itemRoutes from "./routes/items.js";
 import { insertUser, getUserByEmail, getUserById } from "./database/users.js";
 import { requireAuth } from "./middleware/auth.js";
+import bcrypt from "bcrypt";
 
 const app = express();
 
@@ -39,10 +40,12 @@ app.use(
   })
 )
 
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
-  const userId = insertUser(email, password);
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const userId = insertUser(email, hashedPassword);
 
   if (!userId) {
     return res.status(401).json({ error: "Registration failed" });  
@@ -54,15 +57,21 @@ app.post("/register", (req, res) => {
 });
 
 // Login - add user id to session
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   // Get user from db
   const user = getUserByEmail(email);
 
+  if (!user || !await bcrypt.compare(password, user.password_hash)) {
+    return res.status(401).json({ error: "Invalid credentials" });  
+  };
+
+  /*
   if (!user || user.password_hash !== password) {
     return res.status(401).json({ error: "Invalid credentials" });  
   };
+  */
 
   req.session.userId = user.id;
 
