@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import session from "express-session";
 import { initDb } from "./database/init.js";
@@ -16,8 +18,8 @@ initDb(false);
 seedDatabase();
 
 app.use(cors({
-  // origin: "http://localhost:3000",
-  origin: "http://localhost:5173",
+  // origin: "http://localhost:5173",
+  origin: process.env.CORS_ORIGIN,
   credentials: true
 }));
 
@@ -25,7 +27,7 @@ app.use(express.json());
 
 app.use(
   session({
-    secret: "very-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -94,5 +96,5 @@ app.get("/me", (req, res) => {
 
 app.use("/items", requireAuth, itemRoutes);
 
-const PORT = 8000;
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+// const PORT = 8000;
+app.listen(process.env.PORT, () => console.log(`Server running at http://localhost:${process.env.PORT}`));

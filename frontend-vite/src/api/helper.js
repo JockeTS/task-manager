@@ -1,7 +1,8 @@
-const BASE_URL = "http://localhost:8000";
+// const BASE_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function apiFetch(path, options = {}) {
-  const res = await fetch(BASE_URL + path, {
+  const res = await fetch(API_URL + path, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
