@@ -31,6 +31,8 @@ function TodoApp() {
 
   // Fetch items from database
   useEffect(() => {
+    document.title = "Tasks - Recurso";
+
     const loadItems = async () => {
       try {
         const data = await fetchItems();

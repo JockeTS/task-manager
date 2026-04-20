@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/helper";
 import AuthForm from "./AuthForm";
@@ -7,6 +7,11 @@ const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  // Set page title when component mounts
+  useEffect(() => {
+    document.title = "Login - Recurso";
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
