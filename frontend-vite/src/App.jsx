@@ -15,7 +15,7 @@ function App() {
   useEffect(() => {
     async function checkAuth() {
 
-      const data = await apiFetch("/me");
+      const data = await apiFetch("/auth/me");
 
       setUser(data.user ? data.user : null);
     }

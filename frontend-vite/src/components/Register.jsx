@@ -7,6 +7,7 @@ import AuthForm from "./AuthForm";
 const Register = ({ onRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +16,13 @@ const Register = ({ onRegister }) => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!email.trim() || password.trim().length < 6) {
+      setError("Email and password are required. Password must be at least 6 characters long.");
+      return;
+    }
+
+    setError("");
 
     try {
       await apiFetch("/register", {
@@ -38,7 +46,7 @@ const Register = ({ onRegister }) => {
         Create account
       </h2>
 
-      <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} buttonText="Create account" />
+      <AuthForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} error={error} buttonText="Create account" />
 
       <p className="text-center text-sm text-muted-foreground">Already have an account? Log in <Link to="/login" className="text-blue-600 underline hover:text-blue-900">here</Link>.</p>
     </>
