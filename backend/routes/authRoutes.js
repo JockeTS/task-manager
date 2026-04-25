@@ -9,7 +9,7 @@ router.post("/register", async (req, res) => {
   const email = req.body.email?.trim().toLowerCase();
   const password = req.body.password?.trim();
 
-  if (!email || !password.length < 6) {
+  if (!email || password.length < 6) {
     return res.status(401).json({ error: "Email or password can't be empty. Password must be at least 6 characters long." });
   }
 
@@ -56,7 +56,7 @@ router.post("/logout", (req, res) => {
 });
 
 // Get user object from user id in session
-router.get("/auth/me", (req, res) => {
+router.get("/me", (req, res) => {
   if (!req.session.userId) {
     res.json({ user: null });
 

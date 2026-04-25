@@ -24,7 +24,7 @@ function App() {
   }, []);
 
   const handleLogout = async () => {
-    await apiFetch("/logout", { method: "POST" });
+    await apiFetch("/auth/logout", { method: "POST" });
     setUser(null);
     navigate("/login");
   };

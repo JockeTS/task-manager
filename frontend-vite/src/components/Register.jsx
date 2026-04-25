@@ -25,13 +25,13 @@ const Register = ({ onRegister }) => {
     setError("");
 
     try {
-      await apiFetch("/register", {
+      await apiFetch("/auth/register", {
         method: "POST",
         body: JSON.stringify({ email, password })
       });
 
       // No catch: registration succeeded
-      const data = await apiFetch("/me");
+      const data = await apiFetch("/auth/me");
       onRegister(data.user);
 
       navigate("/");

@@ -25,13 +25,13 @@ const Login = ({ onLogin }) => {
     setError("");
 
     try {
-      await apiFetch("/login", {
+      await apiFetch("/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password })
       });
 
       // No catch: login succeeded
-      const data = await apiFetch("/me");
+      const data = await apiFetch("/auth/me");
       onLogin(data.user);
 
       navigate("/");
