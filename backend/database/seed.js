@@ -1,4 +1,4 @@
-import { pool } from "./connection";
+import { pool } from "./connection.js";
 
 async function insertUser(email, passwordHash) {
   const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
