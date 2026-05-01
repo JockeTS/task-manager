@@ -56,9 +56,29 @@ export const seedDatabase = async () => {
 
       if (itemCount === 0) {
         // Insert tasks for Alice
+        await insertItem(aliceId, {
+          name: "Finish portfolio project",
+          parent_id: null,
+          position: 0
+        });
+
+        await insertItem(aliceId, {
+          name: "Do laundry",
+          parent_id: null,
+          position: 1
+        });
+
+        await insertItem(aliceId, {
+          name: "Plan weekend trip",
+          parent_id: null,
+          position: 2
+        });
+
+        /*
         await insertItem(aliceId, "Finish portfolio project", 0, 0);
         await insertItem(aliceId, "Do laundry", 0, 1);
         await insertItem(aliceId, "Plan weekend trip", 0, 2);
+        */
 
         // Get parent task id
         const parentResult = await client.query(
@@ -69,12 +89,36 @@ export const seedDatabase = async () => {
         const parentTaskId = parentResult.rows[0].id;
 
         // Nested tasks
-        await insertItem(aliceId, "Write backend code", 0, 0, parentTaskId);
-        await insertItem(aliceId, "Create frontend UI", 0, 1, parentTaskId);
+        await insertItem(aliceId, {
+          name: "Write backend code",
+          parent_id: parentTaskId,
+          position: 0
+        });
+
+        await insertItem(aliceId, {
+          name: "Plan weekend trip",
+          parent_id: parentTaskId,
+          position: 1
+        });
+
+        // await insertItem(aliceId, "Write backend code", 0, 0, parentTaskId);
+        // await insertItem(aliceId, "Create frontend UI", 0, 1, parentTaskId);
 
         // Insert tasks for Bob
-        await insertItem(bobId, "Buy groceries", 0, 0);
-        await insertItem(bobId, "Clean room", 0, 1);
+        await insertItem(bobId, {
+          name: "Buy groceries",
+          parent_id: null,
+          position: 0
+        });
+
+        await insertItem(bobId, {
+          name: "Clean room",
+          parent_id: null,
+          position: 1
+        });
+
+        // await insertItem(bobId, "Buy groceries", 0, 0);
+        // await insertItem(bobId, "Clean room", 0, 1);
 
         console.log("Items seeded");
       } else {

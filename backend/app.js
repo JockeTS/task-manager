@@ -17,7 +17,7 @@ const app = express();
 initDb(false);
 
 // Seeds the database (only if empty)
-seedDatabase();
+// seedDatabase();
 
 app.use(cors({
   // origin: "http://localhost:5173",
