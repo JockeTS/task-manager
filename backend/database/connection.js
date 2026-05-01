@@ -1,3 +1,15 @@
+import pkg from "pg";
+
+const { Pool } = pkg;
+
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+/*
 import path from "path";
 import { fileURLToPath } from "url";
 import Database from "better-sqlite3";
@@ -10,3 +22,4 @@ export const database = new Database(databasePath);
 
 // Make sure foreign keys are enabled
 database.pragma("foreign_keys = ON");
+*/
