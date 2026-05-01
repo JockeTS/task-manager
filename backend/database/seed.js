@@ -1,5 +1,8 @@
 import { pool } from "./connection.js";
+import { insertUser } from "./users.js";
+import { insertItem } from "./items.js";
 
+/*
 async function insertUser(email, passwordHash) {
   const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
@@ -19,6 +22,7 @@ async function insertItem(userId, name, completed = 0, position = 0, parentId = 
     VALUES ($1, $2, $3, $4, $5)
   `, [userId, name, completed, position, parentId]);
 }
+*/
 
 export const seedDatabase = async () => {
   const client = await pool.connect();
