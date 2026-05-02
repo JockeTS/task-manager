@@ -11,6 +11,8 @@ export const insertUser = async(email, passwordHash) => {
   }
 
   // return user.id;
+  const newUser = await getUserByEmail(email);
+  return newUser.id;
 }
 
 export const getUserByEmail = async (email) => {
