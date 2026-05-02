@@ -1,6 +1,18 @@
 import { pool } from "./connection.js";
 
-export const insertUser = async(email, passwordHash) => {
+export const insertUser = async (email, passwordHash) => {
+  const result = await pool.query(
+    `
+    INSERT INTO users (email, password_hash)
+    VALUES ($1, $2)
+    RETURNING id
+    `,
+    [email, passwordHash]
+  );
+
+  return result.rows[0].id;
+
+  /*
   const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
   if (!user) {
@@ -13,6 +25,7 @@ export const insertUser = async(email, passwordHash) => {
   // return user.id;
   const newUser = await getUserByEmail(email);
   return newUser.id;
+  */
 }
 
 export const getUserByEmail = async (email) => {
