@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   // Get user from db
-  const user = getUserByEmail(email);
+  const user = await getUserByEmail(email);
 
   if (!user || !await bcrypt.compare(password, user.password_hash)) {
     return res.status(401).json({ error: "Invalid credentials" });
@@ -56,14 +56,14 @@ router.post("/logout", (req, res) => {
 });
 
 // Get user object from user id in session
-router.get("/me", (req, res) => {
+router.get("/me", async (req, res) => {
   if (!req.session.userId) {
     res.json({ user: null });
 
     return;
   }
 
-  const user = getUserById(req.session.userId);
+  const user = await getUserById(req.session.userId);
 
   res.json({
     user: {
