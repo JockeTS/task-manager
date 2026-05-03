@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
     // const items = getItems();
 
     // const items = await readTestData();
-    const items = getItemsTree(userId);
+    const items = await getItemsTree(userId);
     
     // Send items to client
     res.status(200).json(items);
