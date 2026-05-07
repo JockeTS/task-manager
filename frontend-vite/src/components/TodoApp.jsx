@@ -37,10 +37,6 @@ function TodoApp() {
       try {
         const data = await fetchItems();
 
-        console.log("DATA TYPE:", typeof data);
-        console.log("IS ARRAY:", Array.isArray(data));
-        console.log("DATA:", data);
-
         setItems(data);
       } catch (error) {
         console.error("Error fetching items: ", error);

@@ -2,19 +2,21 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import session from "express-session";
+import pgSession from "connect-pg-simple";
 import { initDb } from "./database/init.js";
 import { seedDatabase } from "./database/seed.js";
 import cors from "cors";
 import itemRoutes from "./routes/itemsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import { insertUser, getUserByEmail, getUserById } from "./database/users.js";
 import { requireAuth } from "./middleware/auth.js";
-import bcrypt from "bcrypt";
+import { pool } from "./database/connection.js";
+
+const PostgresStore = pgSession(session);
 
 const app = express();
 
 // Init the database: true to drop and recreate tables, false to keep existing
-initDb(false);
+initDb(true);
 
 // Seeds the database (only if empty)
 // seedDatabase();
@@ -31,6 +33,11 @@ app.use(express.json());
 
 app.use(
   session({
+    store: new PostgresStore({
+      // conString: process.env.DATABASE_URL
+      pool: pool,
+      tableName: "sessions"
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

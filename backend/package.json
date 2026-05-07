@@ -12,6 +12,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.4.1",
+    "connect-pg-simple": "^10.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^5.1.0",
