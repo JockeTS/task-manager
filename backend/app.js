@@ -16,7 +16,7 @@ const PostgresStore = pgSession(session);
 const app = express();
 
 // Init the database: true to drop and recreate tables, false to keep existing
-initDb(true);
+initDb(false);
 
 // Seeds the database (only if empty)
 // seedDatabase();

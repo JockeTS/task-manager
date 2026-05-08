@@ -33,6 +33,10 @@ router.post("/login", async (req, res) => {
   // Get user from db
   const user = await getUserByEmail(email);
 
+  const test = await bcrypt.compare(password, user.password_hash);
+  console.log("test: ", test);
+  console.log("user from db: ", user);
+
   if (!user || !await bcrypt.compare(password, user.password_hash)) {
     return res.status(401).json({ error: "Invalid credentials" });
   };
