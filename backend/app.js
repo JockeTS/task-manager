@@ -15,7 +15,7 @@ const PostgresStore = pgSession(session);
 
 const app = express();
 
-// Init the database: true to drop and recreate tables, false to keep existing
+// Init the database: true to drop and recreate tables, false to keep as-is
 initDb(false);
 
 // Seeds the database (only if empty)
@@ -34,7 +34,6 @@ app.use(express.json());
 app.use(
   session({
     store: new PostgresStore({
-      // conString: process.env.DATABASE_URL
       pool: pool,
       tableName: "sessions"
     }),
@@ -42,10 +41,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      // secure: false,
       secure: true,
       httpOnly: true,
-      // sameSite: "lax",
       sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24
     }
@@ -55,5 +52,4 @@ app.use(
 app.use("/auth", authRoutes);
 app.use("/items", requireAuth, itemRoutes);
 
-// const PORT = 8000;
 app.listen(process.env.PORT, () => console.log(`Server running at http://localhost:${process.env.PORT}`));

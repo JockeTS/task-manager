@@ -1,5 +1,4 @@
 import express from "express";
-// import { requireAuth } from "../middleware/auth.js";
 import { createItemSchema, paramsSchema, updateItemSchema } from "../validation/itemSchema.js";
 import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "../database/items.js";
 

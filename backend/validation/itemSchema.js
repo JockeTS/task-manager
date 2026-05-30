@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Schema for todo items
 const itemSchema = z.object({
   id: z.coerce.number(),
   user_id: z.coerce.number(),
