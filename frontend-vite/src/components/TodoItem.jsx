@@ -14,7 +14,6 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
-  // const [completed, setCompleted] = useState(item.completed);
 
   const fontSize = 16 + (4 * (level - 1));
 
@@ -37,7 +36,6 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
-        // <EditInput initialValue={item.name} onBlur={handleBlur} />
 
         <input
           value={value}
