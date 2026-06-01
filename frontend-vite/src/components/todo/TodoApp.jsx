@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { createItem, deleteItem, deleteItems, fetchItems, updateItem, updatePositionsInDb } from "../api/items";
+import { createItem, deleteItem, deleteItems, fetchItems, updateItem, updatePositionsInDb } from "../../api/items";
 
-import { deleteItemInTree, getMaxDepth, insertAdjacent, updateItemInTree } from "../utils/cudOps";
-import { findParentArray, replaceArrayInTree } from "../utils/dragDrop";
+import { deleteItemInTree, getMaxDepth, insertAdjacent, updateItemInTree } from "../../utils/cudOps";
+import { findParentArray, replaceArrayInTree } from "../../utils/dragDrop";
 
 import {
   closestCenter,
@@ -20,7 +20,7 @@ import {
 
 import { SortableTodoItem } from "./SortableTodoItem";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 function TodoApp() {
   const [items, setItems] = useState([]);

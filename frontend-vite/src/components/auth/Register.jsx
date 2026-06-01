@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiFetch } from "../api/helper";
-import PageLayout from "./PageLayout";
+import { apiFetch } from "../../api/helper";
 import AuthForm from "./AuthForm";
 
 const Register = ({ onRegister }) => {

@@ -3,10 +3,10 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { apiFetch } from "./api/helper";
-import Register from "./components/Register";
-import Login from "./components/Login";
-import TodoApp from "./components/TodoApp";
-import PageLayout from "./components/PageLayout";
+import Register from "./components/auth/Register";
+import Login from "./components/auth/Login";
+import TodoApp from "./components/todo/TodoApp";
+import PageLayout from "./components/layout/PageLayout";
 
 function App() {
   const [user, setUser] = useState(undefined);
