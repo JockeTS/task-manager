@@ -1,6 +1,6 @@
 import express from "express";
 import { createItemSchema, paramsSchema, updateItemSchema } from "../validation/itemSchema.js";
-import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "../database/items.js";
+import { deleteItem, deleteItems, getItemsTree, insertItem, updateItem, updateItemPositions } from "../database/itemsDB.js";
 
 const router = express.Router();
 

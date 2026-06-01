@@ -1,6 +1,6 @@
 import { pool } from "./connection.js";
-import { insertUser } from "./users.js";
-import { insertItem } from "./items.js";
+import { insertUser } from "./usersDB.js";
+import { insertItem } from "./itemsDB.js";
 
 export const seedDatabase = async () => {
   const client = await pool.connect();
