@@ -2,30 +2,23 @@
 
 [Live Demo](https://task-manager-frontend-qzyl.onrender.com/) (may take a few seconds to start)
 
-![Main view screenshot](docs/images/main-view.png) 
+![Main View Screenshot](docs/images/main-view.png) 
 
-<!-- 
-<p align="center">
-  <img src="./docs/images/main-view.png" width="400" />
-</p>
+A task management application that enables users to organize tasks in unlimited nested hierarchies using a recursive tree structure. The hierarchy is visualized through dynamic font sizing, where parent tasks are displayed with larger text than their children.
 
-Recurso is a task management app focused on organizing tasks into hierarchical parent–child relationships. The task tree can be nested indefinitely, with each level visually distinguished by font size: deeper levels use smaller text, while top-level tasks always appear largest.
--->
-
-Task management app focused on organizing tasks into parent-child relationships. This chain is technically endless and the different levels are visually separated using font size, with tasks on the lowest level having the smallest font size. From there the font size then increases incrementally for each level, so that top-level tasks always have the biggest font size.
+![Tree Structure](docs/images/tree-structure.png) 
 
 ## Functionality
-Clicking a task toggles its status between **completed** (strikethrough) and **pending**.
+Clicking a task toggles its status between **completed** (~~strikethrough~~) and **pending**.
 
 **+ Add New Item**: adds a new top-level task at the bottom of the list
 
 **- Reset List**: deletes all tasks and adds a placeholder task
 
 ### Action Buttons
-
 ![Action buttons screenshot](docs/images/action-buttons.png)
 
-These appear on the right when hovering over a task and support the following functionality:
+Hovering over a task summons the **Action Bar**, a set of buttons for performing the following actions:
 
 * **Drag and Drop**: move the current task, including any child tasks
 
@@ -37,12 +30,27 @@ These appear on the right when hovering over a task and support the following fu
 
 * **Delete**: delete the current task, including any child tasks
 
-## Technical Overview
+## Implementation
 
 ### Backend
-- Uses the Node.js runtime to allow JavaScript to be executed server-side
+Express server exposing a REST API for user authentication and task CRUD operations.
+Authentication is handled using session-based auth with cookies stored via express-session and persisted in a PostgreSQL database.
+
+The API is deployed as a Web Service on Render and connected to a Neon-hosted PostgreSQL database.
+
+It also handles cross-origin requests from the frontend using CORS configuration.
+
+### Frontend
+React client responsible for rendering the task tree and managing the user interface.
+
+Tasks are rendered recursively to support unlimited nesting, with each task component responsible for rendering its children.
+
+Communicates with the backend API using fetch with cookie-based authentication enabled.
+
+Deployed as a static site on Render.
 
 ## How to Run
+The monorepo contains both the server (**/backend**) and client (**/frontend-vite**). From the repo root they can be started locally in the following ways:
 
 ### Server
 ```
@@ -53,7 +61,7 @@ node app.js
 
 ### Client
 ```
-cd /frontend
+cd /frontend-vite
 npm install
 npm start
 ```
