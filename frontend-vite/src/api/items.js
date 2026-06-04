@@ -17,7 +17,7 @@ export const fetchItems = () => {
 export const updateItem = async (updatedItemData) => {
   return apiFetch(`/items/${updatedItemData.id}`, {
     method: "PATCH",
-    body: JSON.stringify({ completed: updatedItemData.completed, name: updatedItemData.name })
+    body: JSON.stringify({ completed: updatedItemData.completed, name: updatedItemData.name, highlighted: updatedItemData.highlighted })
   });
 };
 

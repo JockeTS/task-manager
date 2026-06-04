@@ -2,6 +2,9 @@ import { useState } from "react";
 import { SortableTodoItem } from "./SortableTodoItem";
 
 import { FiMenu, FiEdit2, FiPlus, FiTrash2, FiCornerDownRight } from "react-icons/fi";
+import { FaHighlighter } from "react-icons/fa";
+import { PiHighlighterThin } from "react-icons/pi";
+import { PiHighlighterBold } from "react-icons/pi";
 
 import {
   SortableContext,
@@ -20,6 +23,11 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
     onSave({ ...item, completed: item.completed ? 0 : 1 });
+  };
+
+  // Item highlight is toggled
+  const toggleHighlighted = () => {
+    onSave({ ...item, highlighted: item.highlighted ? 0 : 1 });
   };
 
   // Handle input field being exited
@@ -43,12 +51,13 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          style={{ fontSize: `${fontSize}px`, padding: `${fontSize*0.5}px` }}
+          style={{ fontSize: `${fontSize}px`, padding: `${fontSize * 0.5}px` }}
         />
       ) : ( // Show text span if item is not being edited
-        <span 
+        <span
           className={`hover:bg-(--task-hover) px-2 pt-1 pb-2
-            ${item.completed ? "line-through text-muted-foreground" : ""}
+            ${item.completed ? "line-through text-muted-foreground" : null}
+            ${item.highlighted ? "bg-[#f8ff00]" : null}
           `}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
@@ -68,6 +77,21 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           {isHovered && (
             <div className="inline-flex mx-4 gap-2 align-middle">
 
+              {/* Highlight */}
+              <button
+                className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toggleHighlighted();
+                }}
+                style={{ fontSize: `${fontSize}px` }}
+                data-tooltip-id="tooltip-highlight"
+                data-tooltip-content="Highlight task"
+              >
+                <PiHighlighterBold />
+                <Tooltip id="tooltip-highlight" delayShow={750} />
+              </button>
+
               {/* Drag and Drop */}
               <button
                 className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-grab"
@@ -78,8 +102,8 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 data-tooltip-id="tooltip-drag-and-drop"
                 data-tooltip-content="Drag and drop task"
               >
-                <FiMenu/>
-                <Tooltip id="tooltip-drag-and-drop" delayShow={750}/>
+                <FiMenu />
+                <Tooltip id="tooltip-drag-and-drop" delayShow={750} />
               </button>
 
               {/* Edit */}
@@ -94,7 +118,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 data-tooltip-content="Edit task"
               >
                 <FiEdit2 />
-                <Tooltip id="tooltip-edit" delayShow={750}/>
+                <Tooltip id="tooltip-edit" delayShow={750} />
               </button>
 
               {/* Add Sibling */}
@@ -109,7 +133,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 data-tooltip-content="Add sibling task"
               >
                 <FiPlus />
-                <Tooltip id="tooltip-add-sibling" delayShow={750}/>
+                <Tooltip id="tooltip-add-sibling" delayShow={750} />
               </button>
 
               {/* Add Child */}
@@ -124,7 +148,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 data-tooltip-content="Add child task"
               >
                 <FiCornerDownRight />
-                <Tooltip id="tooltip-add-child" delayShow={750}/>
+                <Tooltip id="tooltip-add-child" delayShow={750} />
               </button>
 
               {/* Delete */}
@@ -139,7 +163,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 data-tooltip-content="Delete task"
               >
                 <FiTrash2 />
-                <Tooltip id="tooltip-delete" delayShow={750}/>
+                <Tooltip id="tooltip-delete" delayShow={750} />
               </button>
             </div>
           )}
