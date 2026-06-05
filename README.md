@@ -20,6 +20,8 @@ Clicking a task toggles its status between **completed** (~~strikethrough~~) and
 
 Hovering over a task summons the **Action Bar**, a set of buttons for performing the following actions:
 
+* **Highlight**: highlight the current task
+
 * **Drag and Drop**: move the current task, including any child tasks
 
 * **Edit**: edit the current task
