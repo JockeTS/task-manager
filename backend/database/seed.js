@@ -1,6 +1,7 @@
 import { pool } from "./connection.js";
 import { insertUser } from "./usersDB.js";
 import { insertItem } from "./itemsDB.js";
+import bcrypt from "bcrypt";
 
 export const seedDatabase = async () => {
   const client = await pool.connect();
@@ -18,11 +19,11 @@ export const seedDatabase = async () => {
 
     if (userCount === 0) {
       // Create users
-      const alice = await insertUser("alice@example.com", "hashedpassword1");
-      const bob = await insertUser("bob@example.com", "hashedpassword2");
+      const hashedPassword1 = await bcrypt.hash("hashedpassword1", 10);
+      const hashedPassword2 = await bcrypt.hash("hashedpassword2", 10);
 
-      const aliceId = alice.id;
-      const bobId = bob.id;
+      const aliceId = await insertUser("alice@example.com", hashedPassword1);
+      const bobId = await insertUser("bob@example.com", hashedPassword2);
 
       console.log("Users seeded");
 
