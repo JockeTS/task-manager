@@ -16,10 +16,10 @@ const PostgresStore = pgSession(session);
 
 const app = express();
 
-// Init the database: true to drop and recreate tables, false to keep as-is
+// Init the database: true to drop and recreate schema, false to keep as-is
 initDb(false);
 
-// Seeds the database (only if empty)
+// Seed the database (resets everything)
 // seedDatabase();
 
 app.set("trust proxy", 1);

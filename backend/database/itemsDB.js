@@ -2,11 +2,13 @@ import { pool } from "./connection.js";
 
 // Insert item with position shifting
 export const insertItem = async (userId, newItemTemp) => {
+  // Get a dedicated connection from the pool to use it for a transaction
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
+    // Update item positions
     if (newItemTemp.parent_id === null) {
       await client.query(
         `
@@ -31,6 +33,7 @@ export const insertItem = async (userId, newItemTemp) => {
       );
     }
 
+    // Insert the new item
     const insertResult = await client.query(
       `
       INSERT INTO items (name, position, parent_id, user_id)
@@ -52,6 +55,7 @@ export const insertItem = async (userId, newItemTemp) => {
     await client.query("ROLLBACK");
     throw err;
   } finally {
+    // Release the dedicated connection after the transaction is complete
     client.release();
   }
 };
