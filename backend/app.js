@@ -25,7 +25,6 @@ initDb(false);
 app.set("trust proxy", 1);
 
 const allowedOrigins = process.env.CORS_ORIGIN.split(",");
-console.log("CORS ORIGINS:", allowedOrigins);
 
 app.use(cors({
   // origin: "http://localhost:5173",
