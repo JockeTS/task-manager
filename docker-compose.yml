@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: task-manager-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jocke_mm
+      POSTGRES_PASSWORD: hejhej
+      POSTGRES_DB: task_manager
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

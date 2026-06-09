@@ -52,7 +52,13 @@ Communicates with the backend API using fetch with cookie-based authentication e
 Deployed as a static site on Render.
 
 ## How to Run
-The monorepo contains both the server (**/backend**) and client (**/frontend-vite**). From the repo root they can be started locally in the following ways:
+The monorepo contains the database, server (**/backend**) and client (**/frontend-vite**). From the repo root they can be started locally in the following ways:
+
+### Database (Docker)
+```
+Start: docker compose up -d
+Stop: docker compose down -v (removes volume)
+```
 
 ### Server
 ```
@@ -65,5 +71,7 @@ node app.js
 ```
 cd /frontend-vite
 npm install
-npm start
+
+Run Dev: npm start
+Build: npm run build
 ```
