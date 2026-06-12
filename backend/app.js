@@ -27,8 +27,6 @@ app.set("trust proxy", 1);
 const allowedOrigins = process.env.CORS_ORIGIN.split(",");
 
 app.use(cors({
-  // origin: "http://localhost:5173",
-  // origin: process.env.CORS_ORIGIN,
   origin: allowedOrigins,
   credentials: true
 }));

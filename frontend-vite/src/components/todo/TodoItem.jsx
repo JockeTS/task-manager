@@ -2,8 +2,6 @@ import { useState } from "react";
 import { SortableTodoItem } from "./SortableTodoItem";
 
 import { FiMenu, FiEdit2, FiPlus, FiTrash2, FiCornerDownRight } from "react-icons/fi";
-import { FaHighlighter } from "react-icons/fa";
-import { PiHighlighterThin } from "react-icons/pi";
 import { PiHighlighterBold } from "react-icons/pi";
 
 import {
@@ -40,8 +38,13 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   };
 
   return (
-    <div className="cursor-pointer mt-2 mb-1" style={{ fontSize: `${fontSize}px` }}>
-
+    /*<div className="border-0 cursor-pointer p-0" style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px` }}>*/
+    
+    <div className={`cursor-pointer p-0 mt-0
+      ${item.parent_id === null ? "border-1" : "border-0"}
+    `}
+    style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px`, marginBottom: item.parent_id === null ? `${fontSize}px` : `${fontSize / 4}px` }}
+    >
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
 
@@ -55,7 +58,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
         />
       ) : ( // Show text span if item is not being edited
         <span
-          className={`hover:bg-(--task-hover) px-2 pt-1 pb-2
+          className={`hover:bg-(--task-hover) px-2 pt-1 pb-2 border-1
             ${item.completed ? "line-through text-muted-foreground" : null}
             ${item.highlighted ? "bg-[#f8ff00]" : null}
           `}
