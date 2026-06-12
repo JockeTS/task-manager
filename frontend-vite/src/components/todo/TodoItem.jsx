@@ -40,10 +40,8 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   return (
     /*<div className="border-0 cursor-pointer p-0" style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px` }}>*/
     
-    <div className={`cursor-pointer p-0 mt-0
-      ${item.parent_id === null ? "border-1" : "border-0"}
-    `}
-    style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px`, marginBottom: item.parent_id === null ? `${fontSize}px` : `${fontSize / 4}px` }}
+    <div className={`cursor-pointer`}
+      style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}}
     >
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
@@ -54,14 +52,16 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          style={{ fontSize: `${fontSize}px`, padding: `${fontSize * 0.5}px` }}
+          style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px` }}
         />
       ) : ( // Show text span if item is not being edited
         <span
-          className={`hover:bg-(--task-hover) px-2 pt-1 pb-2 border-1
+          className={`hover:bg-(--task-hover)
             ${item.completed ? "line-through text-muted-foreground" : null}
             ${item.highlighted ? "bg-[#f8ff00]" : null}
           `}
+
+          style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px`}}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
           onMouseEnter={(e) => {
@@ -76,7 +76,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
           {item.name}
 
-          {/* Show action buttons when item is hovered */}
+          {/* Action Buttons */}
           {isHovered && (
             <div className="inline-flex mx-4 gap-2 align-middle">
 
@@ -124,7 +124,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 <Tooltip id="tooltip-edit" delayShow={750} />
               </button>
 
-              {/* Add Sibling */}
+              {/* Add Sibling 
               <button
                 className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
                 onClick={(event) => {
@@ -138,6 +138,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 <FiPlus />
                 <Tooltip id="tooltip-add-sibling" delayShow={750} />
               </button>
+              */}
 
               {/* Add Child */}
               <button
