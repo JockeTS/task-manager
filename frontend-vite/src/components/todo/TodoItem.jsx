@@ -61,7 +61,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
             ${item.highlighted ? "bg-[#f8ff00]" : null}
           `}
 
-          style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px`}}
+          style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px`, paddingRight: `${fontSize / 2}px`}}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
           onMouseEnter={(e) => {
