@@ -40,8 +40,12 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   };
 
   return (
-    <div className="ml-2" /* style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}} */
+    <div className="" /* style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}} */
     /* style={{ marginLeft: `${fontSize / 2}px` }} */
+      style={{
+        marginBottom: item.parent_id === null ? `${fontSize}px` : `0`,
+        marginLeft: `${fontSize}px`
+      }}
     >
       {isEditing ? (
         // Edit input
@@ -51,36 +55,32 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          /* style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px` }} */
           className="px-2"
           style={{
-            fontSize: `${fontSize}px`, paddingTop: `${fontSize / 4}px`,
-            paddingBottom: `${fontSize / 4}px`
+            fontSize: `${fontSize}px`,
+            // paddingTop: `${fontSize / 4}px`,
+            // paddingBottom: `${fontSize / 4}px`
           }}
         />
       ) : (
-        // Text div
+        // Task name and action bar div
         <div
           className={`
+            inline-flex 
+            items-center 
+            leading-tight 
+            px-2
+            py-1
             cursor-pointer
             hover:bg-task-hover
-            px-2
             ${item.completed ? "line-through text-muted-foreground" : null}
             ${item.highlighted ? "bg-[#f8ff00]" : null}
           `}
 
           style={{
             fontSize: `${fontSize}px`,
-
-            paddingTop: `${fontSize / 4}px`,
-            paddingBottom: `${fontSize / 4}px`
-
-            /*
-            paddingLeft: `${fontSize / 2}px`,
-            paddingRight: `${fontSize / 2}px`,
-            paddingTop: `${fontSize / 4}px`,
-            paddingBottom: `${fontSize / 4}px`
-            */
+            // paddingTop: `${fontSize / 4}px`,
+            // paddingBottom: `${fontSize / 4}px`
           }}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
@@ -94,13 +94,15 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
           onClick={toggleCompleted}>
 
+          {/* Task Name */}
           <span>{item.name}</span>
 
-          {/* Action Buttons */}
+          {/* Action Bar */}
           <div className={`
             inline-flex 
-            mx-4 gap-2 
+            gap-2 
             align-middle 
+            ml-2  
             ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
           `}>
 
