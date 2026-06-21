@@ -11,6 +11,8 @@ import {
 
 import { Tooltip } from 'react-tooltip';
 
+import ActionButton from "./ActionButton";
+
 const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete, dragHandleProps }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
@@ -38,34 +40,47 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   };
 
   return (
-    <div style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}}>
-      {/* Change from text to input if item is being edited */}
+    <div className="ml-2" /* style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}} */
+    /* style={{ marginLeft: `${fontSize / 2}px` }} */
+    >
       {isEditing ? (
-
+        // Edit input
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px` }}
+          /* style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px` }} */
+          className="px-2"
+          style={{
+            fontSize: `${fontSize}px`, paddingTop: `${fontSize / 4}px`,
+            paddingBottom: `${fontSize / 4}px`
+          }}
         />
-      ) : ( // Show text span if item is not being edited
-        <span
+      ) : (
+        // Text div
+        <div
           className={`
             cursor-pointer
             hover:bg-task-hover
-
+            px-2
             ${item.completed ? "line-through text-muted-foreground" : null}
             ${item.highlighted ? "bg-[#f8ff00]" : null}
           `}
 
           style={{
             fontSize: `${fontSize}px`,
+
+            paddingTop: `${fontSize / 4}px`,
+            paddingBottom: `${fontSize / 4}px`
+
+            /*
             paddingLeft: `${fontSize / 2}px`,
             paddingRight: `${fontSize / 2}px`,
             paddingTop: `${fontSize / 4}px`,
             paddingBottom: `${fontSize / 4}px`
+            */
           }}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
@@ -79,57 +94,50 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
           onClick={toggleCompleted}>
 
-          {item.name}
+          <span>{item.name}</span>
 
           {/* Action Buttons */}
-          {isHovered && (
-            <div className="inline-flex mx-4 gap-2 align-middle">
+          <div className={`
+            inline-flex 
+            mx-4 gap-2 
+            align-middle 
+            ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
+          `}>
 
-              {/* Highlight */}
-              <button
-                className="hover:bg-action-button-hover rounded-md mb-1 p-1 transition-colors cursor-pointer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  toggleHighlighted();
-                }}
-                style={{ fontSize: `${fontSize}px`, backgroundColor: item.highlighted ? "var(--color-action-button-hover)" : "" }}
-                data-tooltip-id="tooltip-highlight"
-                data-tooltip-content="Highlight task"
-              >
-                <PiHighlighterBold />
-                <Tooltip id="tooltip-highlight" delayShow={750} />
-              </button>
+            {/* Highlight */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={toggleHighlighted}
+              item={item}
+              fontSize={fontSize}
+              tooltipId="tooltip-highlight"
+              tooltipContent="Highlight task"
+              icon={PiHighlighterBold}
+            />
 
-              {/* Drag and Drop */}
-              <button
-                className="hover:bg-action-button-hover rounded-md mb-1 p-1 transition-colors cursor-grab"
-                {...dragHandleProps.attributes}
-                {...dragHandleProps.listeners}
-                onClick={(e) => e.stopPropagation()}
-                style={{ fontSize: `${fontSize}px` }}
-                data-tooltip-id="tooltip-drag-and-drop"
-                data-tooltip-content="Drag and drop task"
-              >
-                <FiMenu />
-                <Tooltip id="tooltip-drag-and-drop" delayShow={750} />
-              </button>
+            {/* Drag and Drop */}
+            <ActionButton
+              customClasses="cursor-grab"
+              dragHandleProps={dragHandleProps}
+              item={item}
+              fontSize={fontSize}
+              tooltipId="tooltip-drag-and-drop"
+              tooltipContent="Drag and drop task"
+              icon={FiMenu}
+            />
 
-              {/* Edit */}
-              <button
-                className="hover:bg-action-button-hover rounded-md p-1 transition-colors cursor-pointer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setIsEditing(true);
-                }}
-                style={{ fontSize: `${fontSize}px` }}
-                data-tooltip-id="tooltip-edit"
-                data-tooltip-content="Edit task"
-              >
-                <FiEdit2 />
-                <Tooltip id="tooltip-edit" delayShow={750} />
-              </button>
+            {/* Edit */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={() => setIsEditing(true)}
+              item={item}
+              fontSize={fontSize}
+              tooltipId="tooltip-edit"
+              tooltipContent="Edit task"
+              icon={FiEdit2}
+            />
 
-              {/* Add Sibling 
+            {/* Add Sibling 
               <button
                 className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
                 onClick={(event) => {
@@ -145,38 +153,30 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
               </button>
               */}
 
-              {/* Add Child */}
-              <button
-                className="hover:bg-action-button-hover rounded-md p-1 transition-colors cursor-pointer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onAddSubItem(item);
-                }}
-                style={{ fontSize: `${fontSize}px` }}
-                data-tooltip-id="tooltip-add-child"
-                data-tooltip-content="Add child task"
-              >
-                <FiCornerDownRight />
-                <Tooltip id="tooltip-add-child" delayShow={750} />
-              </button>
+            {/* Add Child */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={() => onAddSubItem(item)}
+              item={item}
+              fontSize={fontSize}
+              tooltipId="tooltip-add-child"
+              tooltipContent="Add child task"
+              icon={FiCornerDownRight}
+            />
 
-              {/* Delete */}
-              <button
-                className="hover:bg-action-button-hover rounded-md p-1 transition-colors cursor-pointer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onDelete(item);
-                }}
-                style={{ fontSize: `${fontSize}px` }}
-                data-tooltip-id="tooltip-delete"
-                data-tooltip-content="Delete task"
-              >
-                <FiTrash2 />
-                <Tooltip id="tooltip-delete" delayShow={750} />
-              </button>
-            </div>
-          )}
-        </span>
+            {/* Delete */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={() => onDelete(item)}
+              item={item}
+              fontSize={fontSize}
+              tooltipId="tooltip-delete"
+              tooltipContent="Delete task"
+              icon={FiTrash2}
+            />
+          </div>
+
+        </div>
       )}
 
       {/* Render any potential child items */}
@@ -185,7 +185,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           items={item.items.map(child => child.id)}
           strategy={verticalListSortingStrategy}
         >
-          <ul className="todo-list">
+          <ul className="">
             {item.items.map(child => (
               <SortableTodoItem
                 key={child.id}
