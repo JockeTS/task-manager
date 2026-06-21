@@ -85,6 +85,13 @@
   --radius-3xl: calc(var(--radius) * 2.2);
 
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /*
+  --color-action-button-hover: oklch(82.481% 0.19106 136.948);
+  */
+
+  --color-task-hover: var(--task-hover);
+  --color-action-button-hover: var(--action-button-hover);
 }
 
 :root {
@@ -105,9 +112,12 @@
   --destructive: oklch(0.6 0.2 25);
   --destructive-foreground: oklch(1 0 0);
 
-  --task-hover: oklch(0.97 0.02 250);
+  --task-hover: blue;
+  --action-button-hover: green;
 
   /*
+  --task-hover: oklch(0.97 0.02 250);
+
     --background: oklch(1 0 0);
 
     --foreground: oklch(0.145 0 0);

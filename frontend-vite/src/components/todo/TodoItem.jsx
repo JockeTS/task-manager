@@ -38,11 +38,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   };
 
   return (
-    /*<div className="border-0 cursor-pointer p-0" style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px` }}>*/
-    
-    <div className={`cursor-pointer`}
-      style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}}
-    >
+    <div style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}}>
       {/* Change from text to input if item is being edited */}
       {isEditing ? (
 
@@ -56,12 +52,21 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
         />
       ) : ( // Show text span if item is not being edited
         <span
-          className={`hover:bg-(--task-hover)
+          className={`
+            cursor-pointer
+            hover:bg-task-hover
+
             ${item.completed ? "line-through text-muted-foreground" : null}
             ${item.highlighted ? "bg-[#f8ff00]" : null}
           `}
 
-          style={{ fontSize: `${fontSize}px`, paddingLeft: `${fontSize / 2}px`, paddingRight: `${fontSize / 2}px`}}
+          style={{
+            fontSize: `${fontSize}px`,
+            paddingLeft: `${fontSize / 2}px`,
+            paddingRight: `${fontSize / 2}px`,
+            paddingTop: `${fontSize / 4}px`,
+            paddingBottom: `${fontSize / 4}px`
+          }}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
           onMouseEnter={(e) => {
@@ -82,12 +87,12 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
               {/* Highlight */}
               <button
-                className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
+                className="hover:bg-action-button-hover rounded-md mb-1 p-1 transition-colors cursor-pointer"
                 onClick={(event) => {
                   event.stopPropagation();
                   toggleHighlighted();
                 }}
-                style={{ fontSize: `${fontSize}px` }}
+                style={{ fontSize: `${fontSize}px`, backgroundColor: item.highlighted ? "var(--color-action-button-hover)" : "" }}
                 data-tooltip-id="tooltip-highlight"
                 data-tooltip-content="Highlight task"
               >
@@ -97,7 +102,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
               {/* Drag and Drop */}
               <button
-                className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-grab"
+                className="hover:bg-action-button-hover rounded-md mb-1 p-1 transition-colors cursor-grab"
                 {...dragHandleProps.attributes}
                 {...dragHandleProps.listeners}
                 onClick={(e) => e.stopPropagation()}
@@ -111,7 +116,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
               {/* Edit */}
               <button
-                className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
+                className="hover:bg-action-button-hover rounded-md p-1 transition-colors cursor-pointer"
                 onClick={(event) => {
                   event.stopPropagation();
                   setIsEditing(true);
@@ -142,7 +147,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
               {/* Add Child */}
               <button
-                className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
+                className="hover:bg-action-button-hover rounded-md p-1 transition-colors cursor-pointer"
                 onClick={(event) => {
                   event.stopPropagation();
                   onAddSubItem(item);
@@ -157,7 +162,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
               {/* Delete */}
               <button
-                className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
+                className="hover:bg-action-button-hover rounded-md p-1 transition-colors cursor-pointer"
                 onClick={(event) => {
                   event.stopPropagation();
                   onDelete(item);
