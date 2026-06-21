@@ -9,8 +9,6 @@ import {
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 
-import { Tooltip } from 'react-tooltip';
-
 import ActionButton from "./ActionButton";
 
 const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete, dragHandleProps }) => {
@@ -40,8 +38,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
   };
 
   return (
-    <div className="" /* style={{ marginBottom: item.parent_id === null ? `${fontSize}px` : `0`, marginLeft: `${fontSize}px`}} */
-    /* style={{ marginLeft: `${fontSize / 2}px` }} */
+    <div
       style={{
         marginBottom: item.parent_id === null ? `${fontSize}px` : `0`,
         marginLeft: `${fontSize}px`
@@ -55,12 +52,8 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          className="px-2"
-          style={{
-            fontSize: `${fontSize}px`,
-            // paddingTop: `${fontSize / 4}px`,
-            // paddingBottom: `${fontSize / 4}px`
-          }}
+          className="px-2 py-1"
+          style={{ fontSize: `${fontSize}px` }}
         />
       ) : (
         // Task name and action bar div
@@ -74,14 +67,10 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
             cursor-pointer
             hover:bg-task-hover
             ${item.completed ? "line-through text-muted-foreground" : null}
-            ${item.highlighted ? "bg-[#f8ff00]" : null}
+            ${item.highlighted ? "bg-task-highlight" : null}
           `}
 
-          style={{
-            fontSize: `${fontSize}px`,
-            // paddingTop: `${fontSize / 4}px`,
-            // paddingBottom: `${fontSize / 4}px`
-          }}
+          style={{ fontSize: `${fontSize}px` }}
 
           // Activate or deactivate hovered state when mouse enters or leaves item
           onMouseEnter={(e) => {
@@ -115,6 +104,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
               tooltipId="tooltip-highlight"
               tooltipContent="Highlight task"
               icon={PiHighlighterBold}
+              isStatic={true}
             />
 
             {/* Drag and Drop */}
@@ -153,7 +143,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
                 <FiPlus />
                 <Tooltip id="tooltip-add-sibling" delayShow={750} />
               </button>
-              */}
+            */}
 
             {/* Add Child */}
             <ActionButton
