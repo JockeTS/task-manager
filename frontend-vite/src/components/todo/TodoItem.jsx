@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { SortableTodoItem } from "./SortableTodoItem";
 
-import { FiMenu, FiEdit2, FiPlus, FiTrash2, FiCornerDownRight } from "react-icons/fi";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+
+import { FiMenu, FiEdit2, FiTrash2, FiCornerDownRight } from "react-icons/fi";
 import { PiHighlighterBold } from "react-icons/pi";
-
-import {
-  SortableContext,
-  verticalListSortingStrategy
-} from "@dnd-kit/sortable";
+import { BsArrowsCollapse } from "react-icons/bs";
 
 import ActionButton from "./ActionButton";
+import { SortableTodoItem } from "./SortableTodoItem";
 
-const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelete, dragHandleProps }) => {
+const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
@@ -28,6 +26,13 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
     onSave({ ...item, highlighted: item.highlighted ? 0 : 1 });
   };
 
+  // Item collapse is toggled
+  const toggleCollapsed = () => {
+    if (item.items.length < 1) return;
+
+    onSave({ ...item, collapsed: item.collapsed ? 0 : 1 });
+  };
+
   // Handle input field being exited
   const handleBlur = () => {
     if (value.trim() !== item.name) {
@@ -36,6 +41,13 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
 
     setIsEditing(false);
   };
+
+  // Calculate the number of completed tasks in a tasks array
+  const calculateCompletedChildTasks = (childTasks) => {
+    const completedCount = childTasks.filter(task => task.completed).length;
+
+    return completedCount;
+  }
 
   return (
     <div
@@ -84,7 +96,10 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
           onClick={toggleCompleted}>
 
           {/* Task Name */}
-          <span>{item.name}</span>
+          <span>
+            {item.name} 
+            {item.items.length > 0 && ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`} 
+          </span>
 
           {/* Action Bar */}
           <div className={`
@@ -95,6 +110,18 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
             ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
           `}>
 
+            {/* Collapse */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={toggleCollapsed}
+              item={item}
+              fontSize={fontSize}
+              tooltipId="tooltip-collapse"
+              tooltipContent="Collapse task"
+              icon={BsArrowsCollapse}
+              isActive={item.collapsed ? true : false}
+            />
+
             {/* Highlight */}
             <ActionButton
               customClasses="cursor-pointer"
@@ -104,7 +131,7 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
               tooltipId="tooltip-highlight"
               tooltipContent="Highlight task"
               icon={PiHighlighterBold}
-              isStatic={true}
+              isActive={item.highlighted ? true : false}
             />
 
             {/* Drag and Drop */}
@@ -129,22 +156,6 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
               icon={FiEdit2}
             />
 
-            {/* Add Sibling 
-              <button
-                className="hover:bg-yellow-100 rounded-md p-1 transition-colors cursor-pointer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onAddSiblingItem(item);
-                }}
-                style={{ fontSize: `${fontSize}px` }}
-                data-tooltip-id="tooltip-add-sibling"
-                data-tooltip-content="Add sibling task"
-              >
-                <FiPlus />
-                <Tooltip id="tooltip-add-sibling" delayShow={750} />
-              </button>
-            */}
-
             {/* Add Child */}
             <ActionButton
               customClasses="cursor-pointer"
@@ -167,24 +178,22 @@ const TodoItem = ({ level, item, onSave, onAddSiblingItem, onAddSubItem, onDelet
               icon={FiTrash2}
             />
           </div>
-
         </div>
       )}
 
       {/* Render any potential child items */}
-      {item.items && item.items.length > 0 && (
+      {!item.collapsed && item.items.length > 0 && (
         <SortableContext
           items={item.items.map(child => child.id)}
           strategy={verticalListSortingStrategy}
         >
-          <ul className="">
+          <ul>
             {item.items.map(child => (
               <SortableTodoItem
                 key={child.id}
                 item={child}
                 level={level - 1}
                 onSave={onSave}
-                onAddSiblingItem={onAddSiblingItem}
                 onAddSubItem={onAddSubItem}
                 onDelete={onDelete}
               />

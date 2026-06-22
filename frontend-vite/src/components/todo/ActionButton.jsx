@@ -4,12 +4,12 @@ const ActionButton = ({
   customClasses,
   dragHandleProps,
   onClickFunction,
-  item,
+  // item,
   fontSize,
   tooltipId,
   tooltipContent,
   icon: Icon,
-  isStatic = false
+  isActive = false
 }) => {
 
   return (
@@ -36,7 +36,7 @@ const ActionButton = ({
       style={{
         fontSize: `${fontSize}px`,
         padding: `${fontSize / 4}px`,
-        backgroundColor: isStatic && item.highlighted ? "var(--color-action-button-hover)" : ""
+        backgroundColor: isActive ? "var(--color-action-button-hover)" : ""
         /*
         backgroundColor: isStatic
           ? (item.highlighted

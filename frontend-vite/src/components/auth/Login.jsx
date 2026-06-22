@@ -11,7 +11,7 @@ const Login = ({ onLogin }) => {
 
   // Set page title when component mounts
   useEffect(() => {
-    document.title = "Login - Recurso";
+    document.title = "Login - Recursr";
   }, []);
 
   async function handleSubmit(e) {

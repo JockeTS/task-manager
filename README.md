@@ -1,4 +1,4 @@
-# Recurso - Hierarchical Task Manager
+# Recursr - Hierarchical Task Manager
 
 [Live Demo](https://task-manager-frontend-qzyl.onrender.com/) (may take a few seconds to start)
 

@@ -31,7 +31,7 @@ function TodoApp() {
 
   // Fetch items from database
   useEffect(() => {
-    document.title = "Tasks - Recurso";
+    document.title = "Tasks - Recursr";
 
     const loadItems = async () => {
       try {
@@ -80,6 +80,7 @@ function TodoApp() {
     }
   };
 
+  /*
   // Add a new todo item below the clicked one
   const handleAddSiblingItem = (clickedItem) => {
 
@@ -99,6 +100,7 @@ function TodoApp() {
       return newItems;
     });
   }
+  */
 
   // Add item as child of clicked item
   const handleAddSubItem = (clickedItem) => {
@@ -227,7 +229,6 @@ function TodoApp() {
                     level={treeDepth}
                     item={item}
                     onSave={handleItemSave}
-                    onAddSiblingItem={handleAddSiblingItem}
                     onAddSubItem={handleAddSubItem}
                     onDelete={handleItemDelete}
                   />

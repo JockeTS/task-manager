@@ -10,7 +10,7 @@ const Register = ({ onRegister }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Register - Recurso";
+    document.title = "Register - Recursr";
   }, []);
 
   async function handleSubmit(e) {
