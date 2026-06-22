@@ -28,7 +28,7 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
 
   // Item collapse is toggled
   const toggleCollapsed = () => {
-    if (item.items.length < 1) return;
+    if (!item.items || item.items.length < 1) return;
 
     onSave({ ...item, collapsed: item.collapsed ? 0 : 1 });
   };
@@ -45,6 +45,9 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
   // Calculate the number of completed tasks in a tasks array
   const calculateCompletedChildTasks = (childTasks) => {
     const completedCount = childTasks.filter(task => task.completed).length;
+
+    // Enforce completion status?
+    // completedCount === childTasks.length ? item.completed = true : item.completed = false;
 
     return completedCount;
   }
@@ -98,7 +101,7 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
           {/* Task Name */}
           <span>
             {item.name} 
-            {item.items.length > 0 && ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`} 
+            {item.items && item.items.length > 0 && ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`} 
           </span>
 
           {/* Action Bar */}
@@ -182,7 +185,7 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
       )}
 
       {/* Render any potential child items */}
-      {!item.collapsed && item.items.length > 0 && (
+      {!item.collapsed && item.items && item.items.length > 0 && (
         <SortableContext
           items={item.items.map(child => child.id)}
           strategy={verticalListSortingStrategy}

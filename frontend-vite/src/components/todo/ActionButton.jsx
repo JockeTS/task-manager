@@ -4,7 +4,6 @@ const ActionButton = ({
   customClasses,
   dragHandleProps,
   onClickFunction,
-  // item,
   fontSize,
   tooltipId,
   tooltipContent,
