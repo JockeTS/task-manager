@@ -31,6 +31,14 @@ function App() {
 
   if (user === undefined) return <div>Loading...</div>
 
+  const jsonTest = {
+    "Cook dinner": [
+      "Buy groceries", "Chop vegetables", "Wash dishes"
+    ]
+  }
+
+  console.log(jsonTest);
+
   return (
     <Routes>
       <Route
