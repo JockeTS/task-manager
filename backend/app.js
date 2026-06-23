@@ -48,7 +48,7 @@ app.use(
       httpOnly: true,
       // sameSite: "none",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 24
+      maxAge: 1000 * 60 * 60 * 24 * 30 // Valid for 30 days
     }
   })
 )

@@ -106,10 +106,11 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
 
           {/* Action Bar */}
           <div className={`
-            inline-flex 
+            hidden
+            sm:inline-flex 
             gap-2 
             align-middle 
-            ml-2  
+            ml-2 
             ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
           `}>
 
