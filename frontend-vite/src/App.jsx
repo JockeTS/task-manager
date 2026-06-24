@@ -31,6 +31,7 @@ function App() {
 
   if (user === undefined) return <div>Loading...</div>
 
+  /*
   const jsonTest = {
     "Cook dinner": [
       "Buy groceries", "Chop vegetables", "Wash dishes"
@@ -38,6 +39,7 @@ function App() {
   }
 
   console.log(jsonTest);
+  */
 
   return (
     <Routes>

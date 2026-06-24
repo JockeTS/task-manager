@@ -3,6 +3,31 @@ import { insertUser } from "./usersDB.js";
 import { insertItem } from "./itemsDB.js";
 import bcrypt from "bcrypt";
 
+export const insertSampleTasks = async (userId) => {
+  console.log("Inserting sample tasks");
+
+  // Insert parent sample task
+  const parentTask1 = await insertItem(
+    userId, {
+    name: "Finish portfolio project",
+    parent_id: null,
+    position: 0
+  });
+
+  // Insert child sample tasks
+  await insertItem(userId, {
+    name: "Write backend code",
+    parent_id: parentTask1.id,
+    position: 0
+  });
+
+  await insertItem(userId, {
+    name: "Write frontend code",
+    parent_id: parentTask1.id,
+    position: 1
+  });
+}
+
 export const seedDatabase = async () => {
   try {
     console.log("Seeding starting");

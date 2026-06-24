@@ -1,5 +1,6 @@
 import express from "express";
 import { insertUser, getUserByEmail, getUserById } from "../database/usersDB.js";
+import { insertSampleTasks } from "../database/seed.js";
 import bcrypt from "bcrypt";
 
 // Auth router
@@ -21,6 +22,8 @@ router.post("/register", async (req, res) => {
   if (!userId) {
     return res.status(401).json({ error: "Registration failed" });
   };
+
+  await insertSampleTasks(userId);
 
   req.session.userId = userId;
 
