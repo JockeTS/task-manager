@@ -23,7 +23,7 @@ router.post("/register", async (req, res) => {
     return res.status(401).json({ error: "Registration failed" });
   };
 
-  await insertSampleTasks(userId);
+  // await insertSampleTasks(userId);
 
   req.session.userId = userId;
 
