@@ -99,7 +99,7 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
 
           onClick={toggleCompleted}>
 
-          {/* Toggle recurring task */}
+          {/* Toggle recurring task 
           <div className={`
             hidden
             sm:inline-flex
@@ -115,6 +115,7 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
               value="0"
             />
           </div>
+          */}
 
           {/* Task Name */}
           <span>
@@ -188,6 +189,17 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
               tooltipId="tooltip-add-child"
               tooltipContent="Add child task"
               icon={FiCornerDownRight}
+            />
+
+            {/* Mark as recurring */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={() => onAddSubItem(item)}
+              item={item}
+              fontSize={fontSize}
+              tooltipId="tooltip-recurring"
+              tooltipContent="Mark task as recurring"
+              icon={FaRecycle}
             />
 
             {/* Delete */}
