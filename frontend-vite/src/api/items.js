@@ -21,7 +21,8 @@ export const updateItem = async (updatedItemData) => {
       completed: updatedItemData.completed, 
       name: updatedItemData.name, 
       highlighted: updatedItemData.highlighted, 
-      collapsed: updatedItemData.collapsed
+      collapsed: updatedItemData.collapsed,
+      recurring: updatedItemData.recurring
     })
   });
 };

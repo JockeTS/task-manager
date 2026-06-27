@@ -9,7 +9,8 @@ const itemSchema = z.object({
   position: z.coerce.number(),
   completed: z.coerce.boolean().transform(v => v ? 1 : 0),
   highlighted: z.coerce.boolean().transform(v => v ? 1 : 0),
-  collapsed: z.coerce.boolean().transform(v => v ? 1 : 0)
+  collapsed: z.coerce.boolean().transform(v => v ? 1 : 0),
+  recurring: z.coerce.boolean().transform(v => v ? 1 : 0)
 });
 
 // id is not allowed in the body, and all other fields are required (except when optional) when creating an item
