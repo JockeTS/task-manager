@@ -5,6 +5,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { FiMenu, FiEdit2, FiTrash2, FiCornerDownRight } from "react-icons/fi";
 import { PiHighlighterBold } from "react-icons/pi";
 import { BsArrowsCollapse } from "react-icons/bs";
+import { FaRecycle } from "react-icons/fa";
 
 import ActionButton from "./ActionButton";
 import { SortableTodoItem } from "./SortableTodoItem";
@@ -98,10 +99,27 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
 
           onClick={toggleCompleted}>
 
+          {/* Toggle recurring task */}
+          <div className={`
+            hidden
+            sm:inline-flex
+            transition-opacity
+            ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
+          `}>
+
+            <FaRecycle />
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value="0"
+            />
+          </div>
+
           {/* Task Name */}
           <span>
-            {item.name} 
-            {item.items && item.items.length > 0 && ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`} 
+            {item.name}
+            {item.items && item.items.length > 0 && ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`}
           </span>
 
           {/* Action Bar */}
@@ -111,6 +129,7 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             gap-2 
             align-middle 
             ml-2 
+            transition-opacity
             ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
           `}>
 
