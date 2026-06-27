@@ -34,6 +34,24 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
     onSave({ ...item, collapsed: item.collapsed ? 0 : 1 });
   };
 
+  const toggleRecurring = () => {
+    console.log("Before:", item.recurring);
+
+    const updated = {
+      ...item,
+      recurring: item.recurring ? 0 : 1
+    };
+
+    console.log("After:", updated.recurring);
+
+    onSave(updated);
+    
+    /*
+    console.log("toggling recurring: ", item);
+    onSave({ ...item, recurring: item.recurring ? 0 : 1 });
+    */
+  }
+
   // Handle input field being exited
   const handleBlur = () => {
     if (value.trim() !== item.name) {
@@ -138,7 +156,6 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             <ActionButton
               customClasses="cursor-pointer"
               onClickFunction={toggleCollapsed}
-              item={item}
               fontSize={fontSize}
               tooltipId="tooltip-collapse"
               tooltipContent="Collapse task"
@@ -150,7 +167,6 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             <ActionButton
               customClasses="cursor-pointer"
               onClickFunction={toggleHighlighted}
-              item={item}
               fontSize={fontSize}
               tooltipId="tooltip-highlight"
               tooltipContent="Highlight task"
@@ -162,7 +178,6 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             <ActionButton
               customClasses="cursor-grab"
               dragHandleProps={dragHandleProps}
-              item={item}
               fontSize={fontSize}
               tooltipId="tooltip-drag-and-drop"
               tooltipContent="Drag and drop task"
@@ -173,7 +188,6 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             <ActionButton
               customClasses="cursor-pointer"
               onClickFunction={() => setIsEditing(true)}
-              item={item}
               fontSize={fontSize}
               tooltipId="tooltip-edit"
               tooltipContent="Edit task"
@@ -184,29 +198,27 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             <ActionButton
               customClasses="cursor-pointer"
               onClickFunction={() => onAddSubItem(item)}
-              item={item}
               fontSize={fontSize}
               tooltipId="tooltip-add-child"
               tooltipContent="Add child task"
               icon={FiCornerDownRight}
             />
 
-            {/* Mark as recurring */}
+            {/* Mark as Recurring */}
             <ActionButton
               customClasses="cursor-pointer"
-              onClickFunction={() => onAddSubItem(item)}
-              item={item}
+              onClickFunction={toggleRecurring}
               fontSize={fontSize}
               tooltipId="tooltip-recurring"
               tooltipContent="Mark task as recurring"
               icon={FaRecycle}
+              isActive={item.recurring ? true : false}
             />
 
             {/* Delete */}
             <ActionButton
               customClasses="cursor-pointer"
               onClickFunction={() => onDelete(item)}
-              item={item}
               fontSize={fontSize}
               tooltipId="tooltip-delete"
               tooltipContent="Delete task"
