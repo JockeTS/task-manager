@@ -5,6 +5,7 @@ export const getMaxDepth = (items) => {
   return 1 + Math.max(...items.map(item => getMaxDepth(item.items)));
 }
 
+/*
 // Insert new item adjacent to (below by default) another item with same parent_id (or null)
 export const insertAdjacent = (tree, targetId, newItem) => {
   const targetIndex = tree.findIndex(item => item.id === targetId);
@@ -31,6 +32,7 @@ export const insertAdjacent = (tree, targetId, newItem) => {
     });
   }
 };
+*/
 
 // Update an item in the tree
 export const updateItemInTree = (tree, idToUpdate, updater) => {

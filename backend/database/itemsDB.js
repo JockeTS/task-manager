@@ -91,6 +91,8 @@ export const getItemsTree = async (userId) => {
 
 // Update item
 export const updateItem = async (itemId, fieldsToUpdate, userId) => {
+  console.log(fieldsToUpdate);
+
   const allowedFields = ["name", "completed", "position", "highlighted", "collapsed", "recurring"];
 
   // Filter out any non-existing fields

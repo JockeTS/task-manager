@@ -19,45 +19,53 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
 
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
-    onSave({ ...item, completed: item.completed ? 0 : 1 });
+    // onSave({ ...item, completed: item.completed ? 0 : 1 });
+
+    onSave(item.id, { completed: !item.completed });
   };
 
   // Item highlight is toggled
   const toggleHighlighted = () => {
-    onSave({ ...item, highlighted: item.highlighted ? 0 : 1 });
+    // onSave({ ...item, highlighted: item.highlighted ? 0 : 1 });
+
+    onSave(item.id, { highlighted: !item.highlighted });
   };
 
   // Item collapse is toggled
   const toggleCollapsed = () => {
     if (!item.items || item.items.length < 1) return;
 
-    onSave({ ...item, collapsed: item.collapsed ? 0 : 1 });
+    // onSave({ ...item, collapsed: item.collapsed ? 0 : 1 });
+
+    onSave(item.id, { collapsed: !item.collapsed });
   };
 
   const toggleRecurring = () => {
-    console.log("Before:", item.recurring);
-
-    const updated = {
-      ...item,
-      recurring: item.recurring ? 0 : 1
-    };
-
-    console.log("After:", updated.recurring);
-
-    onSave(updated);
-    
-    /*
-    console.log("toggling recurring: ", item);
-    onSave({ ...item, recurring: item.recurring ? 0 : 1 });
-    */
+    onSave(item.id, { recurring: !item.recurring });
   }
 
   // Handle input field being exited
   const handleBlur = () => {
-    if (value.trim() !== item.name) {
-      onSave({ ...item, name: value.trim() });
+    /*
+    if (value.trim() !== "" || value.trim() === item.name ) {
+      setIsEditing(false);
+      return;
     }
+    */
+      
+    if (value.trim() != "" && value.trim() !== item.name) {
+      if (item.isNew) {
+        // onCreate
+      } else {
+        // onSave(item.id, { name: value.trim() });
+      }
 
+      // onSave({ ...item, name: value.trim() });
+
+      // console.log("is new?: ", item.isNew);
+      // onSave(item.id, { name: value.trim() });
+    }
+    
     setIsEditing(false);
   };
 

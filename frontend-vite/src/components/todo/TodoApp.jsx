@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createItem, deleteItem, deleteItems, fetchItems, updateItem, updatePositionsInDb } from "../../api/items";
 
-import { deleteItemInTree, getMaxDepth, insertAdjacent, updateItemInTree } from "../../utils/cudOps";
+import { deleteItemInTree, getMaxDepth, updateItemInTree } from "../../utils/crudOperations";
 import { findParentArray, replaceArrayInTree } from "../../utils/dragDrop";
 
 import {
@@ -46,40 +46,6 @@ function TodoApp() {
     loadItems();
   }, []);
 
-  // Add a new top-level item at the end of items[]
-  const handleAddTopItem = () => {
-
-    const newItemTemp = {
-      id: `temp-${crypto.randomUUID()}`,
-      name: "",
-      parent_id: null,
-      position: items.length + 1,
-      isNew: true
-    };
-
-    setItems(prevItems => {
-      const newItems = [...prevItems, newItemTemp];
-
-      return newItems;
-    });
-  };
-
-  // Delete all items
-  const handleResetList = async () => {
-    const confirmation = window.confirm("Are you sure you want to reset your list?");
-
-    if (!confirmation) return;
-
-    try {
-      await deleteItems();
-      const freshItems = await fetchItems();
-      setItems(freshItems);
-    } catch (error) {
-      console.error("Failed to reset list: ", error);
-      alert("Could not reset list. Please try again.");
-    }
-  };
-
   /*
   // Add a new todo item below the clicked one
   const handleAddSiblingItem = (clickedItem) => {
@@ -101,6 +67,41 @@ function TodoApp() {
     });
   }
   */
+
+  const handleAddItem = (parentItem = null) => {
+    // Create a new temporary item
+    const newItemTemp = {
+      id: `temp-${crypto.randomUUID()}`,
+      name: "",
+      parent_id: null,
+      position: items.length + 1,
+      isNew: true
+    };
+
+    // Include temporary item in items state
+    setItems(prevItems => {
+      const newItems = [...prevItems, newItemTemp];
+
+      return newItems;
+    });
+  }
+
+  const handleAddTopItem = () => {
+
+    const newItemTemp = {
+      id: `temp-${crypto.randomUUID()}`,
+      name: "",
+      parent_id: null,
+      position: items.length + 1,
+      isNew: true
+    };
+
+    setItems(prevItems => {
+      const newItems = [...prevItems, newItemTemp];
+
+      return newItems;
+    });
+  };
 
   // Add item as child of clicked item
   const handleAddSubItem = (clickedItem) => {
@@ -144,6 +145,23 @@ function TodoApp() {
     }
   };
 
+  // Delete all items
+  const handleResetList = async () => {
+    const confirmation = window.confirm("Are you sure you want to reset your list?");
+
+    if (!confirmation) return;
+
+    try {
+      await deleteItems();
+      const freshItems = await fetchItems();
+      setItems(freshItems);
+    } catch (error) {
+      console.error("Failed to reset list: ", error);
+      alert("Could not reset list. Please try again.");
+    }
+  };
+
+  /*
   const handleItemSave = async (savedItemTemp) => {
 
     const fallbackItems = items;
@@ -177,6 +195,37 @@ function TodoApp() {
     } catch (error) {
       console.log("Error: ", error);
 
+      setItems(fallbackItems);
+      alert("Item could not be saved. Please try again.");
+    }
+  };
+  */
+
+  // const handle
+
+  const handleItemSave = async (itemId, fieldsToUpdate) => {
+    const fallbackItems = items;
+
+    // Optimistic update
+    setItems(prevItems =>
+      updateItemInTree(prevItems, itemId, item => ({
+        ...item,
+        ...fieldsToUpdate
+      }))
+    );
+
+    try {
+      const savedItem = await updateItem(itemId, fieldsToUpdate);
+
+      // "real" update (item from database)
+      setItems(prevItems =>
+        updateItemInTree(prevItems, itemId, item => ({
+          ...item,
+          ...savedItem
+        }))
+      );
+    } catch (error) {
+      console.log("Error: ", error);
       setItems(fallbackItems);
       alert("Item could not be saved. Please try again.");
     }
@@ -215,7 +264,7 @@ function TodoApp() {
   return (
     <>
       <div>
-        <Button id="new-item-btn" onClick={handleAddTopItem} variant="center" className="bg-green-600 hover:bg-green-800">
+        <Button id="new-item-btn" onClick={() => handleAddItem()} variant="center" className="bg-green-600 hover:bg-green-800">
           + Add New Item
         </Button>
 

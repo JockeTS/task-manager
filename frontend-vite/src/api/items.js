@@ -13,8 +13,11 @@ export const fetchItems = () => {
   return apiFetch("/items");
 };
 
+/*
 // Update an item or throw an error if unsuccessful
 export const updateItem = async (updatedItemData) => {
+  console.log("UID: ", updatedItemData);
+
   return apiFetch(`/items/${updatedItemData.id}`, {
     method: "PATCH",
     body: JSON.stringify({ 
@@ -24,6 +27,14 @@ export const updateItem = async (updatedItemData) => {
       collapsed: updatedItemData.collapsed,
       recurring: updatedItemData.recurring
     })
+  });
+};
+*/
+
+export const updateItem = async (itemId, fieldsToUpdate) => {
+  return apiFetch(`/items/${itemId}`, {
+    method: "PATCH",
+    body: JSON.stringify(fieldsToUpdate),
   });
 };
 
