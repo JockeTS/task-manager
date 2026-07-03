@@ -34,6 +34,45 @@ export const insertAdjacent = (tree, targetId, newItem) => {
 };
 */
 
+export const insertItemIntoTree = (tree, newItem) => {
+  // Root item
+  if (newItem.parent_id === null) {
+    return [...tree, newItem];
+  }
+
+  let changed = false;
+
+  const result = tree.map(item => {
+    // Found the parent
+    if (item.id === newItem.parent_id) {
+      changed = true;
+
+      return {
+        ...item,
+        items: [...item.items, newItem],
+      };
+    }
+
+    // Search children
+    if (item.items?.length) {
+      const updatedChildren = insertItemIntoTree(item.items, newItem);
+
+      if (updatedChildren !== item.items) {
+        changed = true;
+
+        return {
+          ...item,
+          items: updatedChildren,
+        };
+      }
+    }
+
+    return item;
+  });
+
+  return changed ? result : tree;
+};
+
 // Update an item in the tree
 export const updateItemInTree = (tree, idToUpdate, updater) => {
   let changed = false;

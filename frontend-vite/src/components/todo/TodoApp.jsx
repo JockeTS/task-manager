@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createItem, deleteItem, deleteItems, fetchItems, updateItem, updatePositionsInDb } from "../../api/items";
 
-import { deleteItemInTree, getMaxDepth, updateItemInTree } from "../../utils/crudOperations";
+import { deleteItemInTree, getMaxDepth, updateItemInTree, insertItemIntoTree } from "../../utils/treeOperations";
 import { findParentArray, replaceArrayInTree } from "../../utils/dragDrop";
 
 import {
@@ -86,6 +86,7 @@ function TodoApp() {
     });
   }
 
+  /*
   const handleAddTopItem = () => {
 
     const newItemTemp = {
@@ -126,6 +127,7 @@ function TodoApp() {
       updateItemInTree(prevItems, clickedItem.id, () => updatedClickedItem)
     );
   };
+  */
 
   const handleItemDelete = async (itemToDelete) => {
     // Save original state in case database update fails
@@ -201,8 +203,66 @@ function TodoApp() {
   };
   */
 
-  // const handle
+  const handleItemCreateDB = async (itemData) => {
+    const newItem = await createItem(itemData);
+  }
 
+  // Add item as child of clicked item
+  const handleAddSubItem = (clickedItem) => {
+    const position = clickedItem.items?.length + 1 || 1;
+
+    const newItemTemp = {
+      id: `temp-${crypto.randomUUID()}`,
+      name: "",
+      parent_id: clickedItem.id,
+      position,
+      isNew: true,
+      items: []
+    };
+
+    setItems(prev =>
+      insertItemIntoTree(prev, newItemTemp)
+    );
+
+    // await createItem()
+
+    /*
+    // Replace clickedItem
+    const updatedClickedItem = {
+      ...clickedItem,
+      items: [...(clickedItem.items || []), newItemTemp]
+    };
+
+    setItems(prevItems =>
+      updateItemInTree(prevItems, clickedItem.id, () => updatedClickedItem)
+    );
+    */
+  };
+
+  /*
+  const handleItemCreate = async (tempItem) => {
+    const newItem = await createItem({
+      name: tempItem.name,
+      position: tempItem.position,
+      parent_id: tempItem.parent_id
+    });
+
+    setItems(prev =>
+      insertItemIntoTree(prev, newItem)
+    );
+  }
+  */
+
+  // Update item in database, return it and use it to update UI
+  const handleItemUpdate = async (item, fieldsToUpdate) => {
+    const updatedItem = await updateItem(item.id, fieldsToUpdate);
+
+    setItems(prev =>
+      updateItemInTree(prev, item.id, () => updatedItem)
+    );
+  }
+
+  /*
   const handleItemSave = async (itemId, fieldsToUpdate) => {
     const fallbackItems = items;
 
@@ -230,6 +290,7 @@ function TodoApp() {
       alert("Item could not be saved. Please try again.");
     }
   };
+  */
 
   // Runs when an item is dropped over another
   const handleDragEnd = (event) => {
@@ -277,8 +338,9 @@ function TodoApp() {
                     key={item.id}
                     level={treeDepth}
                     item={item}
-                    onSave={handleItemSave}
-                    onAddSubItem={handleAddSubItem}
+                    onCreateUI={handleAddSubItem}
+                    onCreateDB={handleItemCreateDB}
+                    onUpdate={handleItemUpdate}
                     onDelete={handleItemDelete}
                   />
                 ))}

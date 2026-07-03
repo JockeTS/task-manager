@@ -10,7 +10,7 @@ import { FaRecycle } from "react-icons/fa";
 import ActionButton from "./ActionButton";
 import { SortableTodoItem } from "./SortableTodoItem";
 
-const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps }) => {
+const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dragHandleProps }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
@@ -21,14 +21,15 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
   const toggleCompleted = () => {
     // onSave({ ...item, completed: item.completed ? 0 : 1 });
 
-    onSave(item.id, { completed: !item.completed });
+    // onSave(item.id, { completed: !item.completed });
+    onUpdate(item, { completed: !item.completed });
   };
 
   // Item highlight is toggled
   const toggleHighlighted = () => {
     // onSave({ ...item, highlighted: item.highlighted ? 0 : 1 });
 
-    onSave(item.id, { highlighted: !item.highlighted });
+    onUpdate(item, { highlighted: !item.highlighted });
   };
 
   // Item collapse is toggled
@@ -37,11 +38,11 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
 
     // onSave({ ...item, collapsed: item.collapsed ? 0 : 1 });
 
-    onSave(item.id, { collapsed: !item.collapsed });
+    onUpdate(item, { collapsed: !item.collapsed });
   };
 
   const toggleRecurring = () => {
-    onSave(item.id, { recurring: !item.recurring });
+    onUpdate(item, { recurring: !item.recurring });
   }
 
   // Handle input field being exited
@@ -56,8 +57,10 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
     if (value.trim() != "" && value.trim() !== item.name) {
       if (item.isNew) {
         // onCreate
+        onCreateDB(item);
       } else {
-        // onSave(item.id, { name: value.trim() });
+        onSave(item.id, { name: value.trim() });
+        // onUpdate
       }
 
       // onSave({ ...item, name: value.trim() });
@@ -108,8 +111,6 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             py-1
             cursor-pointer
             hover:bg-task-hover
-            ${item.completed ? "line-through text-muted-foreground" : null}
-            ${item.highlighted ? "bg-task-highlight" : null}
           `}
 
           style={{ fontSize: `${fontSize}px` }}
@@ -144,7 +145,10 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
           */}
 
           {/* Task Name */}
-          <span>
+          <span className={`
+            ${item.completed ? "line-through text-muted-foreground" : null}
+            ${item.highlighted ? "bg-task-highlight" : null}
+          `}>
             {item.name}
             {item.items && item.items.length > 0 && ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`}
           </span>
@@ -205,7 +209,7 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
             {/* Add Child */}
             <ActionButton
               customClasses="cursor-pointer"
-              onClickFunction={() => onAddSubItem(item)}
+              onClickFunction={() => onCreateUI(item)}
               fontSize={fontSize}
               tooltipId="tooltip-add-child"
               tooltipContent="Add child task"
@@ -248,8 +252,9 @@ const TodoItem = ({ level, item, onSave, onAddSubItem, onDelete, dragHandleProps
                 key={child.id}
                 item={child}
                 level={level - 1}
-                onSave={onSave}
-                onAddSubItem={onAddSubItem}
+                onCreateUI={onCreateUI}
+                onCreateDB={onCreateDB}
+                onUpdate={onUpdate}
                 onDelete={onDelete}
               />
             ))}
