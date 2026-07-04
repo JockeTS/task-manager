@@ -204,11 +204,13 @@ function TodoApp() {
   */
 
   const handleItemCreateDB = async (itemData) => {
-    const newItem = await createItem(itemData);
+    console.log("adding new item to database:", itemData);
+    // const newItem = await createItem(itemData);
+    await createItem(itemData);
   }
 
   // Add item as child of clicked item
-  const handleAddSubItem = (clickedItem) => {
+  const handleItemCreateUI = (clickedItem) => {
     const position = clickedItem.items?.length + 1 || 1;
 
     const newItemTemp = {
@@ -223,21 +225,33 @@ function TodoApp() {
     setItems(prev =>
       insertItemIntoTree(prev, newItemTemp)
     );
+  };
 
-    // await createItem()
-
-    /*
-    // Replace clickedItem
-    const updatedClickedItem = {
-      ...clickedItem,
-      items: [...(clickedItem.items || []), newItemTemp]
+  const handleItemCreateUI2 = (parentItem = null) => {
+    // Create a new temporary item
+    const newItemTemp = {
+      id: `temp-${crypto.randomUUID()}`,
+      name: "",
+      parent_id: parentItem?.id || null,
+      position: parentItem
+        ? (parentItem.items?.length ?? 0) + 1
+        : items.length + 1,
+      isNew: true
     };
 
-    setItems(prevItems =>
-      updateItemInTree(prevItems, clickedItem.id, () => updatedClickedItem)
+    setItems(prev =>
+      insertItemIntoTree(prev, newItemTemp)
     );
+
+    /*
+    // Include temporary item in items state
+    setItems(prevItems => {
+      const newItems = [...prevItems, newItemTemp];
+
+      return newItems;
+    });
     */
-  };
+  }
 
   /*
   const handleItemCreate = async (tempItem) => {
@@ -325,7 +339,7 @@ function TodoApp() {
   return (
     <>
       <div>
-        <Button id="new-item-btn" onClick={() => handleAddItem()} variant="center" className="bg-green-600 hover:bg-green-800">
+        <Button id="new-item-btn" onClick={() => handleItemCreateUI2()} variant="center" className="bg-green-600 hover:bg-green-800">
           + Add New Item
         </Button>
 
@@ -338,7 +352,7 @@ function TodoApp() {
                     key={item.id}
                     level={treeDepth}
                     item={item}
-                    onCreateUI={handleAddSubItem}
+                    onCreateUI={() => handleItemCreateUI2(item)}
                     onCreateDB={handleItemCreateDB}
                     onUpdate={handleItemUpdate}
                     onDelete={handleItemDelete}

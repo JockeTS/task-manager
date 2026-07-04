@@ -57,10 +57,12 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
     if (value.trim() != "" && value.trim() !== item.name) {
       if (item.isNew) {
         // onCreate
+        item.name = value;
+        console.log("onBlur create new item: ", item);
         onCreateDB(item);
       } else {
-        onSave(item.id, { name: value.trim() });
-        // onUpdate
+        // onSave(item.id, { name: value.trim() });
+        onUpdate(item, { name: value.trim() });
       }
 
       // onSave({ ...item, name: value.trim() });
