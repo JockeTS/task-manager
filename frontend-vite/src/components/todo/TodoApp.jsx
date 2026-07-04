@@ -46,105 +46,42 @@ function TodoApp() {
     loadItems();
   }, []);
 
-  /*
-  // Add a new todo item below the clicked one
-  const handleAddSiblingItem = (clickedItem) => {
+  // Create a new task item and insert it into the task tree (items)
+  const handleItemCreateUI = (parentItem = null) => {
 
-    // Props for the new item
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
       name: "",
-      parent_id: clickedItem.parent_id,
-      position: clickedItem.position + 1,
+      parent_id: parentItem?.id || null,
+      position: parentItem
+        ? (parentItem.items?.length ?? 0) + 1
+        : items.length + 1,
       isNew: true
     };
 
-    // Add item to UI (onBlur saves it to db)
-    setItems(prevItems => {
-      const newItems = insertAdjacent(prevItems, clickedItem.id, newItemTemp);
-
-      return newItems;
-    });
-  }
-  */
-
-  const handleAddItem = (parentItem = null) => {
-    // Create a new temporary item
-    const newItemTemp = {
-      id: `temp-${crypto.randomUUID()}`,
-      name: "",
-      parent_id: null,
-      position: items.length + 1,
-      isNew: true
-    };
-
-    // Include temporary item in items state
-    setItems(prevItems => {
-      const newItems = [...prevItems, newItemTemp];
-
-      return newItems;
-    });
-  }
-
-  /*
-  const handleAddTopItem = () => {
-
-    const newItemTemp = {
-      id: `temp-${crypto.randomUUID()}`,
-      name: "",
-      parent_id: null,
-      position: items.length + 1,
-      isNew: true
-    };
-
-    setItems(prevItems => {
-      const newItems = [...prevItems, newItemTemp];
-
-      return newItems;
-    });
-  };
-
-  // Add item as child of clicked item
-  const handleAddSubItem = (clickedItem) => {
-    const position = clickedItem.items?.length + 1 || 1;
-
-    const newItemTemp = {
-      id: `temp-${crypto.randomUUID()}`,
-      name: "",
-      parent_id: clickedItem.id,
-      position,
-      isNew: true,
-      items: []
-    };
-
-    // Do not mutate clickedItem
-    const updatedClickedItem = {
-      ...clickedItem,
-      items: [...(clickedItem.items || []), newItemTemp]
-    };
-
-    setItems(prevItems =>
-      updateItemInTree(prevItems, clickedItem.id, () => updatedClickedItem)
+    setItems(prev =>
+      insertItemIntoTree(prev, newItemTemp)
     );
-  };
-  */
+  }
+
+  
+  const handleItemCreateDB = async (itemData) => {
+    await createItem(itemData);
+  }
+
+  // Update item in database, return it and use it to update UI
+  const handleItemUpdate = async (item, fieldsToUpdate) => {
+    const updatedItem = await updateItem(item.id, fieldsToUpdate);
+
+    setItems(prev =>
+      updateItemInTree(prev, item.id, () => updatedItem)
+    );
+  }
 
   const handleItemDelete = async (itemToDelete) => {
-    // Save original state in case database update fails
-    const fallbackItems = items;
-
     setItems(prevItems => deleteItemInTree(prevItems, itemToDelete.id));
 
-    // Delete item from database
-    try {
-      await deleteItem(itemToDelete.id);
-    } catch (error) {
-      console.error(error);
-
-      setItems(fallbackItems);
-
-      alert("Deletion failed. Please try again.");
-    }
+    await deleteItem(itemToDelete.id);
   };
 
   // Delete all items
@@ -162,149 +99,6 @@ function TodoApp() {
       alert("Could not reset list. Please try again.");
     }
   };
-
-  /*
-  const handleItemSave = async (savedItemTemp) => {
-
-    const fallbackItems = items;
-
-    // 1. Optimistic update (fine)
-    setItems(prevItems =>
-      updateItemInTree(prevItems, savedItemTemp.id, item => ({
-        ...item,
-        ...savedItemTemp
-      }))
-    );
-
-    try {
-      const savedItem = savedItemTemp.isNew
-        ? await createItem({
-          name: savedItemTemp.name,
-          position: savedItemTemp.position,
-          parent_id: savedItemTemp.parent_id
-        })
-        : await updateItem(savedItemTemp);
-
-      // 2. Replace TEMP item using TEMP id
-      setItems(prevItems =>
-        updateItemInTree(prevItems, savedItemTemp.id, item => ({
-          ...item,          // keep children, UI state
-          ...savedItem,     // apply DB values
-          id: savedItem.id, // IMPORTANT: swap temp id → real id
-          isNew: false
-        }))
-      );
-    } catch (error) {
-      console.log("Error: ", error);
-
-      setItems(fallbackItems);
-      alert("Item could not be saved. Please try again.");
-    }
-  };
-  */
-
-  const handleItemCreateDB = async (itemData) => {
-    console.log("adding new item to database:", itemData);
-    // const newItem = await createItem(itemData);
-    await createItem(itemData);
-  }
-
-  // Add item as child of clicked item
-  const handleItemCreateUI = (clickedItem) => {
-    const position = clickedItem.items?.length + 1 || 1;
-
-    const newItemTemp = {
-      id: `temp-${crypto.randomUUID()}`,
-      name: "",
-      parent_id: clickedItem.id,
-      position,
-      isNew: true,
-      items: []
-    };
-
-    setItems(prev =>
-      insertItemIntoTree(prev, newItemTemp)
-    );
-  };
-
-  const handleItemCreateUI2 = (parentItem = null) => {
-    // Create a new temporary item
-    const newItemTemp = {
-      id: `temp-${crypto.randomUUID()}`,
-      name: "",
-      parent_id: parentItem?.id || null,
-      position: parentItem
-        ? (parentItem.items?.length ?? 0) + 1
-        : items.length + 1,
-      isNew: true
-    };
-
-    setItems(prev =>
-      insertItemIntoTree(prev, newItemTemp)
-    );
-
-    /*
-    // Include temporary item in items state
-    setItems(prevItems => {
-      const newItems = [...prevItems, newItemTemp];
-
-      return newItems;
-    });
-    */
-  }
-
-  /*
-  const handleItemCreate = async (tempItem) => {
-    const newItem = await createItem({
-      name: tempItem.name,
-      position: tempItem.position,
-      parent_id: tempItem.parent_id
-    });
-
-    setItems(prev =>
-      insertItemIntoTree(prev, newItem)
-    );
-  }
-  */
-
-  // Update item in database, return it and use it to update UI
-  const handleItemUpdate = async (item, fieldsToUpdate) => {
-    const updatedItem = await updateItem(item.id, fieldsToUpdate);
-
-    setItems(prev =>
-      updateItemInTree(prev, item.id, () => updatedItem)
-    );
-  }
-
-  /*
-  const handleItemSave = async (itemId, fieldsToUpdate) => {
-    const fallbackItems = items;
-
-    // Optimistic update
-    setItems(prevItems =>
-      updateItemInTree(prevItems, itemId, item => ({
-        ...item,
-        ...fieldsToUpdate
-      }))
-    );
-
-    try {
-      const savedItem = await updateItem(itemId, fieldsToUpdate);
-
-      // "real" update (item from database)
-      setItems(prevItems =>
-        updateItemInTree(prevItems, itemId, item => ({
-          ...item,
-          ...savedItem
-        }))
-      );
-    } catch (error) {
-      console.log("Error: ", error);
-      setItems(fallbackItems);
-      alert("Item could not be saved. Please try again.");
-    }
-  };
-  */
 
   // Runs when an item is dropped over another
   const handleDragEnd = (event) => {
@@ -339,7 +133,7 @@ function TodoApp() {
   return (
     <>
       <div>
-        <Button id="new-item-btn" onClick={() => handleItemCreateUI2()} variant="center" className="bg-green-600 hover:bg-green-800">
+        <Button id="new-item-btn" onClick={() => handleItemCreateUI()} variant="center" className="bg-green-600 hover:bg-green-800">
           + Add New Item
         </Button>
 
@@ -352,7 +146,7 @@ function TodoApp() {
                     key={item.id}
                     level={treeDepth}
                     item={item}
-                    onCreateUI={() => handleItemCreateUI2(item)}
+                    onCreateUI={() => handleItemCreateUI(item)}
                     onCreateDB={handleItemCreateDB}
                     onUpdate={handleItemUpdate}
                     onDelete={handleItemDelete}
