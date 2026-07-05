@@ -19,24 +19,17 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
-    // onSave({ ...item, completed: item.completed ? 0 : 1 });
-
-    // onSave(item.id, { completed: !item.completed });
     onUpdate(item, { completed: !item.completed });
   };
 
   // Item highlight is toggled
   const toggleHighlighted = () => {
-    // onSave({ ...item, highlighted: item.highlighted ? 0 : 1 });
-
     onUpdate(item, { highlighted: !item.highlighted });
   };
 
   // Item collapse is toggled
   const toggleCollapsed = () => {
     if (!item.items || item.items.length < 1) return;
-
-    // onSave({ ...item, collapsed: item.collapsed ? 0 : 1 });
 
     onUpdate(item, { collapsed: !item.collapsed });
   };
@@ -45,33 +38,30 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
     onUpdate(item, { recurring: !item.recurring });
   }
 
-  // Handle input field being exited
   const handleBlur = () => {
-    /*
-    if (value.trim() !== "" || value.trim() === item.name ) {
-      setIsEditing(false);
+    setIsEditing(false);
+
+    const trimmedValue = value.trim();
+
+    if (trimmedValue === "") {
+      onDelete(item);
       return;
     }
-    */
-      
-    if (value.trim() != "" && value.trim() !== item.name) {
-      if (item.isNew) {
-        // onCreate
-        item.name = value;
-        console.log("onBlur create new item: ", item);
-        onCreateDB(item);
-      } else {
-        // onSave(item.id, { name: value.trim() });
-        onUpdate(item, { name: value.trim() });
-      }
 
-      // onSave({ ...item, name: value.trim() });
-
-      // console.log("is new?: ", item.isNew);
-      // onSave(item.id, { name: value.trim() });
+    if (trimmedValue === item.name) {
+      return;
     }
-    
-    setIsEditing(false);
+
+    if (item.isNew) {
+      onCreateDB({
+        ...item,
+        name: trimmedValue,
+      });
+
+      // item.isNew = false;
+    } else {
+      onUpdate(item, { name: trimmedValue });
+    }
   };
 
   // Calculate the number of completed tasks in a tasks array
@@ -97,7 +87,11 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={handleBlur}
-          onKeyDown={(e) => e.key === "Enter" && handleBlur()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.currentTarget.blur();
+            }
+          }}
           autoFocus
           className="px-2 py-1"
           style={{ fontSize: `${fontSize}px` }}

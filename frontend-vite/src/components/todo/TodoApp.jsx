@@ -48,6 +48,7 @@ function TodoApp() {
 
   // Create a new task item and insert it into the task tree (items)
   const handleItemCreateUI = (parentItem = null) => {
+    console.log("PI: ", parentItem);
 
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
@@ -56,7 +57,8 @@ function TodoApp() {
       position: parentItem
         ? (parentItem.items?.length ?? 0) + 1
         : items.length + 1,
-      isNew: true
+      isNew: true,
+      items: []
     };
 
     setItems(prev =>
@@ -64,9 +66,22 @@ function TodoApp() {
     );
   }
 
-  
+  // Insert a new item into the database and update the UI
   const handleItemCreateDB = async (itemData) => {
-    await createItem(itemData);
+    const newItem = await createItem(itemData);
+
+    setItems(prev =>
+      updateItemInTree(prev, itemData.id, () => ({
+        ...newItem,
+        isNew: false
+      }))
+    );
+
+    /*
+    setItems(prev =>
+      updateItemInTree(prev, itemData.id, () => newItem)
+    );
+    */
   }
 
   // Update item in database, return it and use it to update UI
@@ -78,10 +93,11 @@ function TodoApp() {
     );
   }
 
+  // Delete item from task tree. Delete it from database too if not new
   const handleItemDelete = async (itemToDelete) => {
     setItems(prevItems => deleteItemInTree(prevItems, itemToDelete.id));
 
-    await deleteItem(itemToDelete.id);
+    if (!itemToDelete.isNew) await deleteItem(itemToDelete.id);
   };
 
   // Delete all items
