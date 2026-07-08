@@ -146,8 +146,6 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
             }
           </span>
 
-
-
           {/**
           <span className="ml-2">
             {item.items && item.items.length > 0 && `(${calculateCompletedChildTasks(item.items)}/${item.items.length})`}
@@ -164,29 +162,19 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
             align-middle 
             ml-2 
             transition-opacity
+            cursor-default
             ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
           `}>
+            {/* One-time actions */}
 
-            {/* Collapse */}
+            {/* Edit */}
             <ActionButton
               customClasses="cursor-pointer"
-              onClickFunction={toggleCollapsed}
+              onClickFunction={() => setIsEditing(true)}
               fontSize={fontSize}
-              tooltipId="tooltip-collapse"
-              tooltipContent="Collapse task"
-              icon={BsArrowsCollapse}
-              isActive={item.collapsed ? true : false}
-            />
-
-            {/* Highlight */}
-            <ActionButton
-              customClasses="cursor-pointer"
-              onClickFunction={toggleHighlighted}
-              fontSize={fontSize}
-              tooltipId="tooltip-highlight"
-              tooltipContent="Highlight task"
-              icon={PiHighlighterBold}
-              isActive={item.highlighted ? true : false}
+              tooltipId="tooltip-edit"
+              tooltipContent="Edit task"
+              icon={FiEdit2}
             />
 
             {/* Drag and Drop */}
@@ -199,16 +187,6 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
               icon={FiMenu}
             />
 
-            {/* Edit */}
-            <ActionButton
-              customClasses="cursor-pointer"
-              onClickFunction={() => setIsEditing(true)}
-              fontSize={fontSize}
-              tooltipId="tooltip-edit"
-              tooltipContent="Edit task"
-              icon={FiEdit2}
-            />
-
             {/* Add Child */}
             <ActionButton
               customClasses="cursor-pointer"
@@ -217,6 +195,41 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
               tooltipId="tooltip-add-child"
               tooltipContent="Add child task"
               icon={FiCornerDownRight}
+            />
+
+            {/* Delete */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={() => onDelete(item)}
+              fontSize={fontSize}
+              tooltipId="tooltip-delete"
+              tooltipContent="Delete task"
+              icon={FiTrash2}
+            />
+
+            {/* Toggles */}
+            <div className="mx-2 w-px bg-background" />
+
+            {/* Highlight */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={toggleHighlighted}
+              fontSize={fontSize}
+              tooltipId="tooltip-highlight"
+              tooltipContent="Highlight task"
+              icon={PiHighlighterBold}
+              isActive={item.highlighted ? true : false}
+            />
+
+            {/* Collapse */}
+            <ActionButton
+              customClasses="cursor-pointer"
+              onClickFunction={toggleCollapsed}
+              fontSize={fontSize}
+              tooltipId="tooltip-collapse"
+              tooltipContent="Collapse task"
+              icon={BsArrowsCollapse}
+              isActive={item.collapsed ? true : false}
             />
 
             {/* Mark as Recurring */}
@@ -228,16 +241,6 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
               tooltipContent="Mark task as recurring"
               icon={FaRecycle}
               isActive={item.recurring !== null ? true : false}
-            />
-
-            {/* Delete */}
-            <ActionButton
-              customClasses="cursor-pointer"
-              onClickFunction={() => onDelete(item)}
-              fontSize={fontSize}
-              tooltipId="tooltip-delete"
-              tooltipContent="Delete task"
-              icon={FiTrash2}
             />
           </div>
         </div>
