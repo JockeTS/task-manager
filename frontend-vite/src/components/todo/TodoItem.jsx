@@ -19,7 +19,11 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
-    onUpdate(item, { completed: !item.completed });
+    if (item.recurring !== null) {
+      onUpdate(item, { recurring: item.recurring + 1 });
+    } else {
+      onUpdate(item, { completed: !item.completed });
+    }
   };
 
   // Item highlight is toggled
@@ -35,7 +39,7 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
   };
 
   const toggleRecurring = () => {
-    onUpdate(item, { recurring: !item.recurring });
+    onUpdate(item, { recurring: item.recurring === null ? 0 : null });
   }
 
   const handleBlur = () => {
@@ -122,32 +126,35 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
           onClick={toggleCompleted}>
 
-          {/* Toggle recurring task 
-          <div className={`
-            hidden
-            sm:inline-flex
-            transition-opacity
-            ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}
-          `}>
-
-            <FaRecycle />
-            <input
-              type="number"
-              min="0"
-              step="1"
-              value="0"
-            />
-          </div>
-          */}
-
           {/* Task Name */}
           <span className={`
-            ${item.completed ? "line-through text-muted-foreground" : null}
-            ${item.highlighted ? "bg-task-highlight" : null}
+            px-2
+            ${item.completed && "line-through text-muted-foreground"}
+            ${item.highlighted && "bg-task-highlight"}
           `}>
             {item.name}
-            {item.items && item.items.length > 0 && ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`}
+
+            {item.items && item.items.length > 0 &&
+              <span className="ml-2">({calculateCompletedChildTasks(item.items)}/{item.items.length})</span>
+            }
+
+            {item.recurring !== null &&
+              <span className={`
+              ml-2
+              ${item.recurring > 0 && "line-through text-muted-foreground"}
+            `}>(x{item.recurring})</span>
+            }
           </span>
+
+
+
+          {/**
+          <span className="ml-2">
+            {item.items && item.items.length > 0 && `(${calculateCompletedChildTasks(item.items)}/${item.items.length})`}
+          </span>
+           
+          {item.recurring !== null && ` (x${item.recurring})`}
+          */}
 
           {/* Action Bar */}
           <div className={`
@@ -220,7 +227,7 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
               tooltipId="tooltip-recurring"
               tooltipContent="Mark task as recurring"
               icon={FaRecycle}
-              isActive={item.recurring ? true : false}
+              isActive={item.recurring !== null ? true : false}
             />
 
             {/* Delete */}

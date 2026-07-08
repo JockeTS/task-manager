@@ -48,8 +48,6 @@ function TodoApp() {
 
   // Create a new task item and insert it into the task tree (items)
   const handleItemCreateUI = (parentItem = null) => {
-    console.log("PI: ", parentItem);
-
     const newItemTemp = {
       id: `temp-${crypto.randomUUID()}`,
       name: "",
@@ -156,13 +154,13 @@ function TodoApp() {
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
             <div className="my-4 shadow-sm">
-              <ul className="p-4">
+              <ul className="py-4">
                 {items.map(item => (
                   <SortableTodoItem
                     key={item.id}
                     level={treeDepth}
                     item={item}
-                    onCreateUI={() => handleItemCreateUI(item)}
+                    onCreateUI={handleItemCreateUI}
                     onCreateDB={handleItemCreateDB}
                     onUpdate={handleItemUpdate}
                     onDelete={handleItemDelete}

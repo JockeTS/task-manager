@@ -39,11 +39,11 @@ export async function initDb(forceReset = false) {
       user_id INTEGER NOT NULL,
       parent_id INTEGER,
       name TEXT NOT NULL,
-      completed BOOLEAN DEFAULT false,
+      completed BOOLEAN DEFAULT FALSE,
       position INTEGER DEFAULT 0,
-      highlighted BOOLEAN DEFAULT false,
-      collapsed BOOLEAN DEFAULT false,
-      recurring BOOLEAN DEFAULT false,
+      highlighted BOOLEAN DEFAULT FALSE,
+      collapsed BOOLEAN DEFAULT FALSE,
+      recurring INTEGER,
 
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
       FOREIGN KEY (parent_id) REFERENCES items(id) ON DELETE CASCADE

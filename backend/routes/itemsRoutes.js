@@ -77,6 +77,7 @@ router.patch("/:id", async (req, res) => {
     res.status(200).json(itemToUpdate);
   } catch (error) {
     // If server-side error
+    console.log(error);
     res.status(500).json({ success: false, message: "Internal server error." });
   }
 });
