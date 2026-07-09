@@ -56,7 +56,8 @@ function TodoApp() {
         ? (parentItem.items?.length ?? 0) + 1
         : items.length + 1,
       isNew: true,
-      items: []
+      items: [],
+      recurring: null
     };
 
     setItems(prev =>

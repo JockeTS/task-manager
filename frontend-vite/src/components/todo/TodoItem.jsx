@@ -146,14 +146,6 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
             }
           </span>
 
-          {/**
-          <span className="ml-2">
-            {item.items && item.items.length > 0 && `(${calculateCompletedChildTasks(item.items)}/${item.items.length})`}
-          </span>
-           
-          {item.recurring !== null && ` (x${item.recurring})`}
-          */}
-
           {/* Action Bar */}
           <div className={`
             hidden

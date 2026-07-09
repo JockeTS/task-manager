@@ -7,15 +7,23 @@ const itemSchema = z.object({
   parent_id: z.coerce.number().nullable(),
   name: z.string().min(1).trim(),
   position: z.coerce.number(),
-  completed: z.coerce.boolean().transform(v => v ? 1 : 0),
-  highlighted: z.coerce.boolean().transform(v => v ? 1 : 0),
-  collapsed: z.coerce.boolean().transform(v => v ? 1 : 0),
+  completed: z.coerce.boolean(), // .transform(v => v ? 1 : 0),
+  highlighted: z.coerce.boolean(), // .transform(v => v ? 1 : 0),
+  collapsed: z.coerce.boolean(), // .transform(v => v ? 1 : 0),
   recurring: z.coerce.number().nullable()
 });
 
+/*
 // id is not allowed in the body, and all other fields are required (except when optional) when creating an item
 export const createItemSchema = itemSchema
   .omit({ id: true, user_id: true });
+*/
+
+export const createItemSchema = z.object({
+  parent_id: z.coerce.number().nullable(),
+  name: z.string().min(1).trim(),
+  position: z.coerce.number(),
+});
 
 // id is part of params, all other fields are optional in the body when updating an item
 export const updateItemSchema = itemSchema
