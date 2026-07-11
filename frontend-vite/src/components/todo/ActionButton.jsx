@@ -1,19 +1,25 @@
 import { Tooltip } from 'react-tooltip';
 
 const ActionButton = ({
-  customClasses,
+  customCursor = "",
   dragHandleProps,
   onClickFunction,
   fontSize,
   tooltipId,
   tooltipContent,
   icon: Icon,
-  isActive = false
+  isActive = false,
+  isDisabled = false
 }) => {
 
   return (
     <button
-      className={`hover:bg-action-button-hover ${customClasses}`}
+      className={`
+        ${isDisabled
+          ? "cursor-not-allowed text-muted-foreground"
+          : customCursor || "cursor-pointer"}
+        ${!isDisabled ? "hover:bg-action-button-hover" : ""}
+      `}
       {...dragHandleProps?.attributes}
       {...dragHandleProps?.listeners}
       onClick={(event) => {
@@ -30,6 +36,7 @@ const ActionButton = ({
       }}
       data-tooltip-id={tooltipId}
       data-tooltip-content={tooltipContent}
+      disabled={isDisabled}
     >
 
       <Icon />

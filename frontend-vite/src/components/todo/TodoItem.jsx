@@ -10,7 +10,16 @@ import { FaRecycle } from "react-icons/fa";
 import ActionButton from "./ActionButton";
 import { SortableTodoItem } from "./SortableTodoItem";
 
-const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dragHandleProps }) => {
+const TodoItem = ({
+  level,
+  item,
+  onCreateUI,
+  onCreateDB,
+  onUpdate,
+  onDelete,
+  dragHandleProps
+}) => {
+
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
@@ -128,21 +137,18 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
           {/* Task Name */}
           <span className={`
-            px-2
-            ${item.completed && "line-through text-muted-foreground"}
-            ${item.highlighted && "bg-task-highlight"}
-          `}>
+              ${item.completed && "line-through text-muted-foreground"}
+              ${item.highlighted && "bg-task-highlight"}
+              px-2
+            `}>
             {item.name}
 
-            {item.items && item.items.length > 0 &&
-              <span className="ml-2">({calculateCompletedChildTasks(item.items)}/{item.items.length})</span>
+            {item.items?.length > 0 &&
+              <span> ({calculateCompletedChildTasks(item.items)}/{item.items.length})</span>
             }
 
             {item.recurring !== null &&
-              <span className={`
-              ml-2
-              ${item.recurring > 0 && "line-through text-muted-foreground"}
-            `}>(x{item.recurring})</span>
+              <span> (x{item.recurring})</span>
             }
           </span>
 
@@ -161,7 +167,6 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
             {/* Edit */}
             <ActionButton
-              customClasses="cursor-pointer"
               onClickFunction={() => setIsEditing(true)}
               fontSize={fontSize}
               tooltipId="tooltip-edit"
@@ -171,7 +176,7 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
             {/* Drag and Drop */}
             <ActionButton
-              customClasses="cursor-grab"
+              customCursor="cursor-grab"
               dragHandleProps={dragHandleProps}
               fontSize={fontSize}
               tooltipId="tooltip-drag-and-drop"
@@ -181,7 +186,6 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
             {/* Add Child */}
             <ActionButton
-              customClasses="cursor-pointer"
               onClickFunction={() => onCreateUI(item)}
               fontSize={fontSize}
               tooltipId="tooltip-add-child"
@@ -191,7 +195,6 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
             {/* Delete */}
             <ActionButton
-              customClasses="cursor-pointer"
               onClickFunction={() => onDelete(item)}
               fontSize={fontSize}
               tooltipId="tooltip-delete"
@@ -200,11 +203,10 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
             />
 
             {/* Toggles */}
-            <div className="mx-2 w-px bg-background" />
+            <span className="mx-2 w-px bg-background" />
 
             {/* Highlight */}
             <ActionButton
-              customClasses="cursor-pointer"
               onClickFunction={toggleHighlighted}
               fontSize={fontSize}
               tooltipId="tooltip-highlight"
@@ -215,18 +217,17 @@ const TodoItem = ({ level, item, onCreateUI, onCreateDB, onUpdate, onDelete, dra
 
             {/* Collapse */}
             <ActionButton
-              customClasses="cursor-pointer"
               onClickFunction={toggleCollapsed}
               fontSize={fontSize}
               tooltipId="tooltip-collapse"
               tooltipContent="Collapse task"
               icon={BsArrowsCollapse}
               isActive={item.collapsed ? true : false}
+              isDisabled={!item.items?.length}
             />
 
             {/* Mark as Recurring */}
             <ActionButton
-              customClasses="cursor-pointer"
               onClickFunction={toggleRecurring}
               fontSize={fontSize}
               tooltipId="tooltip-recurring"
