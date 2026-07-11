@@ -135,20 +135,22 @@ const TodoItem = ({
 
           onClick={toggleCompleted}>
 
-          {/* Task Name */}
+          {/* Task name, completed child tasks and recurring counts  */}
           <span className={`
-              ${item.completed && "line-through text-muted-foreground"}
-              ${item.highlighted && "bg-task-highlight"}
-              px-2
-            `}>
+            px-2
+            ${item.highlighted && "bg-task-highlight"}  
+            ${item.completed && "line-through text-muted-foreground"}
+          `}>
             {item.name}
 
             {item.items?.length > 0 &&
-              <span> ({calculateCompletedChildTasks(item.items)}/{item.items.length})</span>
+              ` (${calculateCompletedChildTasks(item.items)}/${item.items.length})`
             }
 
-            {item.recurring !== null &&
-              <span> (x{item.recurring})</span>
+            {item.recurring != null &&
+              <span className="ml-2 line-through text-muted-foreground">
+                (x{item.recurring})
+              </span>
             }
           </span>
 
@@ -234,6 +236,7 @@ const TodoItem = ({
               tooltipContent="Mark task as recurring"
               icon={FaRecycle}
               isActive={item.recurring !== null ? true : false}
+              isDisabled={item.completed}
             />
           </div>
         </div>
