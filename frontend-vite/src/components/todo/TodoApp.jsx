@@ -24,6 +24,8 @@ import { Button } from "../ui/button";
 
 function TodoApp() {
   const [items, setItems] = useState([]);
+  const [hoveredItemId, setHoveredItemId] = useState(null);
+  const [editingItemId, setEditingItemId] = useState(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor)
@@ -48,8 +50,15 @@ function TodoApp() {
 
   // Create a new task item and insert it into the task tree (items)
   const handleItemCreateUI = (parentItem = null) => {
+    // itemEditId = null
+
+    setHoveredItemId(null);
+    
+    const tempId = crypto.randomUUID();
+
     const newItemTemp = {
-      id: `temp-${crypto.randomUUID()}`,
+      // id: `temp-${crypto.randomUUID()}`,
+      id: tempId,
       name: "",
       parent_id: parentItem?.id || null,
       position: parentItem
@@ -63,6 +72,8 @@ function TodoApp() {
     setItems(prev =>
       insertItemIntoTree(prev, newItemTemp)
     );
+
+    setEditingItemId(tempId);
   }
 
   // Insert a new item into the database and update the UI
@@ -161,6 +172,10 @@ function TodoApp() {
                     key={item.id}
                     level={treeDepth}
                     item={item}
+                    hoveredItemId={hoveredItemId}
+                    setHoveredItemId={setHoveredItemId}
+                    editingItemId={editingItemId}
+                    setEditingItemId={setEditingItemId}
                     onCreateUI={handleItemCreateUI}
                     onCreateDB={handleItemCreateDB}
                     onUpdate={handleItemUpdate}

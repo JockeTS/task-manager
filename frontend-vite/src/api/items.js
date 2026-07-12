@@ -13,24 +13,6 @@ export const fetchItems = () => {
   return apiFetch("/items");
 };
 
-/*
-// Update an item or throw an error if unsuccessful
-export const updateItem = async (updatedItemData) => {
-  console.log("UID: ", updatedItemData);
-
-  return apiFetch(`/items/${updatedItemData.id}`, {
-    method: "PATCH",
-    body: JSON.stringify({ 
-      completed: updatedItemData.completed, 
-      name: updatedItemData.name, 
-      highlighted: updatedItemData.highlighted, 
-      collapsed: updatedItemData.collapsed,
-      recurring: updatedItemData.recurring
-    })
-  });
-};
-*/
-
 export const updateItem = async (itemId, fieldsToUpdate) => {
   return apiFetch(`/items/${itemId}`, {
     method: "PATCH",

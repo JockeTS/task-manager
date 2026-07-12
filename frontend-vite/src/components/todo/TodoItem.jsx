@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
+import { LuPen, LuMove, LuPlus, LuTrash2, LuHighlighter, LuEyeOff, LuRecycle } from "react-icons/lu";
+
+/*
 import { FiMenu, FiEdit2, FiTrash2, FiCornerDownRight } from "react-icons/fi";
 import { PiHighlighterBold } from "react-icons/pi";
 import { BsArrowsCollapse } from "react-icons/bs";
 import { FaRecycle } from "react-icons/fa";
+*/
 
 import ActionButton from "./ActionButton";
 import { SortableTodoItem } from "./SortableTodoItem";
@@ -13,6 +17,10 @@ import { SortableTodoItem } from "./SortableTodoItem";
 const TodoItem = ({
   level,
   item,
+  hoveredItemId,
+  setHoveredItemId,
+  editingItemId,
+  setEditingItemId,
   onCreateUI,
   onCreateDB,
   onUpdate,
@@ -20,11 +28,85 @@ const TodoItem = ({
   dragHandleProps
 }) => {
 
-  const [isHovered, setIsHovered] = useState(false);
-  const [isEditing, setIsEditing] = useState(item.isNew);
+  // const [isHovered, setIsHovered] = useState(false);
+  // const [isEditing, setIsEditing] = useState(item.isNew);
   const [value, setValue] = useState(item.name);
 
   const fontSize = 16 + (4 * (level - 1));
+
+  const isHovered = hoveredItemId === item.id;
+  const isEditing = editingItemId === item.id;
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!isHovered || isEditing) return;
+
+    const handleKeyDown = (e) => {
+      switch (e.key.toLowerCase()) {
+        // One-time functions
+        // edit
+        case "e":
+          e.preventDefault();
+          setEditingItemId(item.id);
+          break;
+
+        // drag & drop
+
+        // add child task
+        case "c":
+          e.preventDefault();
+          onCreateUI(item);
+          break;
+
+        // delete
+        case "x":
+          e.preventDefault();
+          onDelete(item);
+          break;
+
+        // Toggle functions
+        // complete
+        case " ":
+          e.preventDefault();
+          toggleCompleted();
+          break;
+
+        // highlight
+        case "h":
+          e.preventDefault();
+          toggleHighlighted();
+          break;
+
+        // hide child tasks
+        case "i":
+          e.preventDefault();
+          toggleCollapsed();
+          break;
+
+        // repeat
+        case "r":
+          e.preventDefault();
+          toggleRecurring();
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    isHovered, 
+    isEditing, 
+    // item.id,
+    // item.highlighted,
+    onUpdate,
+    // setEditingItemId
+  ]);
 
   // Item text is clicked (to complete / uncomplete it)
   const toggleCompleted = () => {
@@ -48,11 +130,14 @@ const TodoItem = ({
   };
 
   const toggleRecurring = () => {
+    if (item.completed) return;
+
     onUpdate(item, { recurring: item.recurring === null ? 0 : null });
   }
 
   const handleBlur = () => {
-    setIsEditing(false);
+    // setIsEditing(false);
+    setEditingItemId(null);
 
     const trimmedValue = value.trim();
 
@@ -106,7 +191,7 @@ const TodoItem = ({
             }
           }}
           autoFocus
-          className="px-2 py-1"
+          className="px-4 py-1"
           style={{ fontSize: `${fontSize}px` }}
         />
       ) : (
@@ -124,14 +209,16 @@ const TodoItem = ({
 
           style={{ fontSize: `${fontSize}px` }}
 
-          // Activate or deactivate hovered state when mouse enters or leaves item
-          onMouseEnter={(e) => {
-            setIsHovered(true)
-          }}
+          onMouseEnter={() => setHoveredItemId(item.id)}
 
-          onMouseLeave={(e) => {
-            setIsHovered(false)
-          }}
+          onMouseLeave={() =>
+            // setHoveredItemId(null)
+
+            setHoveredItemId(current =>
+              current === item.id ? null : current
+            )
+
+          }
 
           onClick={toggleCompleted}>
 
@@ -169,11 +256,12 @@ const TodoItem = ({
 
             {/* Edit */}
             <ActionButton
-              onClickFunction={() => setIsEditing(true)}
+              // onClickFunction={() => setIsEditing(true)}
+              onClickFunction={() => setEditingItemId(item.id)}
               fontSize={fontSize}
               tooltipId="tooltip-edit"
-              tooltipContent="Edit task"
-              icon={FiEdit2}
+              tooltipContent="edit (e)"
+              icon={LuPen}
             />
 
             {/* Drag and Drop */}
@@ -182,8 +270,8 @@ const TodoItem = ({
               dragHandleProps={dragHandleProps}
               fontSize={fontSize}
               tooltipId="tooltip-drag-and-drop"
-              tooltipContent="Drag and drop task"
-              icon={FiMenu}
+              tooltipContent="drag & drop"
+              icon={LuMove}
             />
 
             {/* Add Child */}
@@ -191,8 +279,8 @@ const TodoItem = ({
               onClickFunction={() => onCreateUI(item)}
               fontSize={fontSize}
               tooltipId="tooltip-add-child"
-              tooltipContent="Add child task"
-              icon={FiCornerDownRight}
+              tooltipContent="add child task (c)"
+              icon={LuPlus}
             />
 
             {/* Delete */}
@@ -200,8 +288,8 @@ const TodoItem = ({
               onClickFunction={() => onDelete(item)}
               fontSize={fontSize}
               tooltipId="tooltip-delete"
-              tooltipContent="Delete task"
-              icon={FiTrash2}
+              tooltipContent="delete (x)"
+              icon={LuTrash2}
             />
 
             {/* Toggles */}
@@ -212,8 +300,8 @@ const TodoItem = ({
               onClickFunction={toggleHighlighted}
               fontSize={fontSize}
               tooltipId="tooltip-highlight"
-              tooltipContent="Highlight task"
-              icon={PiHighlighterBold}
+              tooltipContent="highlight (h)"
+              icon={LuHighlighter}
               isActive={item.highlighted ? true : false}
             />
 
@@ -222,8 +310,8 @@ const TodoItem = ({
               onClickFunction={toggleCollapsed}
               fontSize={fontSize}
               tooltipId="tooltip-collapse"
-              tooltipContent="Collapse task"
-              icon={BsArrowsCollapse}
+              tooltipContent="hide child tasks (i)"
+              icon={LuEyeOff}
               isActive={item.collapsed ? true : false}
               isDisabled={!item.items?.length}
             />
@@ -233,8 +321,8 @@ const TodoItem = ({
               onClickFunction={toggleRecurring}
               fontSize={fontSize}
               tooltipId="tooltip-recurring"
-              tooltipContent="Mark task as recurring"
-              icon={FaRecycle}
+              tooltipContent="repeat (r)"
+              icon={LuRecycle}
               isActive={item.recurring !== null ? true : false}
               isDisabled={item.completed}
             />
@@ -253,6 +341,10 @@ const TodoItem = ({
               <SortableTodoItem
                 key={child.id}
                 item={child}
+                hoveredItemId={hoveredItemId}
+                setHoveredItemId={setHoveredItemId}
+                editingItemId={editingItemId}
+                setEditingItemId={setEditingItemId}
                 level={level - 1}
                 onCreateUI={onCreateUI}
                 onCreateDB={onCreateDB}

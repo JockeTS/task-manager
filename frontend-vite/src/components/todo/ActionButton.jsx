@@ -23,6 +23,8 @@ const ActionButton = ({
       {...dragHandleProps?.attributes}
       {...dragHandleProps?.listeners}
       onClick={(event) => {
+        if (isDisabled) return;
+
         event.stopPropagation();
 
         if (onClickFunction) {
